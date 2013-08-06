@@ -1,4 +1,4 @@
 fax-api-client-python
 =====================
 
-Monopond Fax API PHP Client
+Monopond Fax API Python Client
