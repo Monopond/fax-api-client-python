@@ -3,7 +3,7 @@ import sys
 import pymonopond
 from mockito import *
 #sys.path.append("/home/froilan/Documents/ut_2/ut/idea/pymonopond")
-from pymonopond.requests import *
+from pymonopond.monopond_python_client import *
 from suds.client import *
 from unittest import *
 # def  setup():
