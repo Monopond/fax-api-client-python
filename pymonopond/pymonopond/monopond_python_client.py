@@ -552,6 +552,9 @@ class FaxMessage:
     '''
         fax message client object
     '''
+    def __init__(self):
+        self.documents = []
+
     def _setMessageRef(self, messageRef):
         self._messageRef = messageRef
     def _getMessageRef(self):
