@@ -251,7 +251,7 @@ class TestClientFunctions(unittest.TestCase):
             client.faxStatus(StubObject())
 
     def mockClient(self):
-        client = ClientWrapper('file:///home/froilan/Documents/ut_2/ut/idea/pymonopond/tests/faxapi-v2.wsdl','user','pass')
+        client = ClientWrapper('file:///' + os.path.join(os.path.dirname(__file__), 'faxapi-v2.wsdl'),'user','pass')
         client._client = mock(Client)
         client._client.service = mock(ServiceSelector)
         client._client.factory = mock(Factory)
