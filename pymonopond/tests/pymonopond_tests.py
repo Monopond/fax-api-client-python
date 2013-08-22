@@ -5,7 +5,7 @@ from mockito import *
 #sys.path.append("/home/froilan/Documents/ut_2/ut/idea/pymonopond")
 from pymonopond.monopond_python_client import *
 from suds.client import *
-from unittest import *
+import unittest
 # def  setup():
 # 	print "SETUP!"
 
@@ -15,12 +15,16 @@ from unittest import *
 # def test_basic():
 # 	print "I RAN!"
 
+#Only used for mocking
+class StubObject:
+    pass
+
 class TestClientFunctions(unittest.TestCase):
     def setUp(self):
         pass
 
     def testMapApiResponseToResponse(self):
-        client = ClientWrapper('file:///home/froilan/Documents/ut_2/ut/idea/pymonopond/tests/faxapi-v2.wsdl','user','pass')
+        client = ClientWrapper('faxapi-v2.wsdl','user','pass')
         apiResponse = StubObject()
         apiResponse.FaxStatusTotals = self.initializeStatusTotals()
         apiResponse.FaxResultsTotals = self.initializeResultTotals()
@@ -316,9 +320,9 @@ class TestClientFunctions(unittest.TestCase):
         statusResults._dateCallEnded = "2010-10-10T00:00:10Z"
         return statusResults
 
-#Only used for mocking
-class StubObject:
-    pass
 
 if __name__ == '__main__':
     unittest.main()
+
+
+
