@@ -3,549 +3,11 @@ from suds.client import Client
 from suds.bindings import binding
 from suds.sax.element import Element, Attribute
 
-class SendFaxRequest:
-
-    def __init__(self):
-        self._faxMessages = []
-        self._documents = []
-
-    def _setBroadcastRef(self, broadcastRef=None):
-        self._broadcastRef = broadcastRef
-    def _getBroadcastRef(self):
-        return self._broadcastRef
-
-    def _setSendRef(self, sendRef=None):
-        self._sendRef = sendRef
-    def _getSendRef(self):
-        return self._sendRef
-
-    def _setResolution(self, resolution=None):
-        self._resolution = resolution
-    def _getResolution(self):
-        return self._resolution
-
-    def addFaxMessage(self, faxMessage=None):
-        self._faxMessages.append(faxMessage)
-    def _setFaxMessages(self, faxMessages=None):
-        self._faxMessages = faxMessages
-    def _getFaxMessages(self):
-        return self._faxMessages
-
-    def addDocument(self, document=None):
-        self._documents.append(document)
-    def _setDocuments(self, documents=None):
-        self._documents = documents
-    def _getDocuments(self):
-        return self._documents
-
-    def _setBlocklists(self, blocklists=None):
-        self._blocklists = blocklists
-    def _getBlocklists(self):
-        return self._blocklists
-
-    def _setSendFrom(self, sendFrom=None):
-        self._sendFrom = sendFrom
-    def _getSendFrom(self):
-        return self._sendFrom
-
-    def _setScheduledStartTime(self, scheduledStartTime=None):
-        self._scheduledStartTime = scheduledStartTime
-    def _getScheduledStartTime(self):
-        return self._scheduledStartTime
-
-    def _setRetries(self, retries=None):
-        self._retries = retries
-    def _getRetriese(self):
-        return self._retries
-
-    def _setBusyRetries(self, busyRetries=None):
-        self._busyRetries = busyRetries
-    def _getBusyRetries(self):
-        return self._busyRetries
-
-    def _setHeaderFormat(self, headerFormat=None):
-        self._headerFormat = headerFormat
-    def _getHeaderFormat(self):
-        return self._headerFormat
-
-    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
-    sendRef = property(_setSendRef, _getSendRef)
-    resolution = property(_setResolution, _getResolution)
-    faxMessages = property(_getFaxMessages)
-    documents = property(_getDocuments)
-    blocklists = property(_setBlocklists, _getBlocklists)
-    sendFrom = property(_setSendFrom, _getSendFrom)
-    scheduledStartTime = property(_setScheduledStartTime, _getScheduledStartTime)
-    retries = property(_setRetries, _getRetriese)
-    busyRetries = property(_setBusyRetries, _getBusyRetries)
-    headerFormat = property(_setHeaderFormat, _getHeaderFormat)
-
-    def __str__(self):
-        return ("broadcastRef=%s, sendRef=%s, resolution=%s,  sendFrom=%s, scheduledStartTime=%s, retries=%s, busyRetries=%s, headerFormat=%s, faxMessages=%s, documents=%s"
-                %(self.broadcastRef, self.sendRef, self.resolution, self.sendFrom, self.scheduledStartTime, self.retries, self.busyRetries, self.headerFormat, self.faxMessages, self.documents))
-
-class FaxStatusRequest:
-
-    def _setMessageRef(self, messageRef=None):
-        self._messageRef = messageRef
-    def _getMessageRef(self):
-        return self._messageRef
-
-    def _setSendRef(self, sendRef=None):
-        self._sendRef = sendRef
-    def _getSendRef(self):
-        return self._sendRef
-
-    def _setBroadcastRef(self, broadcastRef=None):
-        self._broadcastRef = broadcastRef
-    def _getBroadcastRef(self):
-        return self._broadcastRef
-
-    def _setVerbosity(self, verbosity=None):
-        self._verbosity = verbosity
-    def _getVerbosity(self):
-        return self._verbosity
-
-    messageRef = property(_setMessageRef, _getMessageRef)
-    sendRef = property(_setSendRef, _getSendRef)
-    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
-    verbosity = property(_setVerbosity, _getVerbosity)
-
-    def __str__(self):
-        return ("messageRef=%s, sendRef=%s, broadcastRef=%s, verbosity=%s" %(self.messageRef, self.sendRef, self.broadcastRef, self.verbosity))
-
-class PauseFaxRequest:
-
-    def _setMessageRef(self, messageRef=None):
-        self._messageRef = messageRef
-    def _getMessageRef(self):
-        return self._messageRef
-
-    def _setSendRef(self, sendRef=None):
-        self._sendRef = sendRef
-    def _getSendRef(self):
-        return self._sendRef
-
-    def _setBroadcastRef(self, broadcastRef=None):
-        self._broadcastRef = broadcastRef
-    def _getBroadcastRef(self):
-        return self._broadcastRef
-
-    messageRef = property(_setMessageRef, _getMessageRef)
-    sendRef = property(_setSendRef, _getSendRef)
-    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
-
-    def __str__(self):
-        return ("messageRef=%s, sendRef=%s, broadcastRef=%s" %(self.messageRef, self.sendRef, self.broadcastRef))
-
-
-class ResumeFaxRequest:
-
-    def _setMessageRef(self, messageRef=None):
-        self._messageRef = messageRef
-    def _getMessageRef(self):
-        return self._messageRef
-
-    def _setSendRef(self, sendRef=None):
-        self._sendRef = sendRef
-    def _getSendRef(self):
-        return self._sendRef
-
-    def _setBroadcastRef(self, broadcastRef=None):
-        self._broadcastRef = broadcastRef
-    def _getBroadcastRef(self):
-        return self._broadcastRef
-
-    messageRef = property(_setMessageRef, _getMessageRef)
-    sendRef = property(_setSendRef, _getSendRef)
-    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
-
-    def __str__(self):
-        return ("messageRef=%s, sendRef=%s, broadcastRef=%s" %(self.messageRef, self.sendRef, self.broadcastRef))
-
-class StopFaxRequest:
-
-    def _setMessageRef(self, messageRef=None):
-        self._messageRef = messageRef
-    def _getMessageRef(self):
-        return self._messageRef
-
-    def _setSendRef(self, sendRef=None):
-        self._sendRef = sendRef
-    def _getSendRef(self):
-        return self._sendRef
-
-    def _setBroadcastRef(self, broadcastRef=None):
-        self._broadcastRef = broadcastRef
-    def _getBroadcastRef(self):
-        return self._broadcastRef
-
-    messageRef = property(_setMessageRef, _getMessageRef)
-    sendRef = property(_setSendRef, _getSendRef)
-    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
-
-    def __str__(self):
-        return ("messageRef=%s, sendRef=%s, broadcastRef=%s" %(self.messageRef, self.sendRef, self.broadcastRef))
-
-class FaxResultsTotals:
-    def __init__(self):
-        self._faxMessages = []
-
-    def _setSuccessTotal(self, total=None):
-        self._successTotal = total
-    def _getSuccessTotal(self):
-        return self._successTotal
-
-    def _setBlockedTotal(self, total=None):
-        self._blockedTotal = total
-    def _getBlockedTotal(self):
-        return self._blockedTotal
-
-    def _setFailedTotal(self, total=None):
-        self._failedTotal = total
-    def _getFailedTotall(self):
-        return self._failedTotal
-
-    def _setTotalAttempts(self, total=None):
-        self._totalAttempts = total
-    def _getotalAttempts(self):
-        return self._totalAttempts
-
-    def _setTotalFaxDuration(self, total=None):
-        self._totalFaxDuration = total
-    def _getTotalFaxDuration(self):
-        return self._totalFaxDuration
-
-    def _setTotalPages(self, total=None):
-        self._totalPages = total
-    def _getTotalPages(self):
-        return self._totalPages
-
-    successTotal = property(_setSuccessTotal, _getSuccessTotal)
-    blockedTotal = property(_setBlockedTotal, _getBlockedTotal)
-    failedTotal = property(_setFailedTotal, _getFailedTotall)
-    totalAttempts = property(_setTotalAttempts, _getTotalFaxDuration)
-    totalFaxDuration = property(_setTotalFaxDuration, _getTotalFaxDuration)
-    totalPages = property(_setTotalPages, _getTotalPages)
-    #faxMessages = property(_getFaxMessages)
-    def __str__(self):
-        return ("successTotal=%s, blockedTotal=%s, failedTotal=%s, totalAttempts=%s, totalFaxDuration=%s, totalPages=%s"
-                %(self.successTotal, self.blockedTotal, self.failedTotal, self.totalAttempts, self.totalFaxDuration, self.totalPages))
-
-
-class FaxStatusTotals:
-    def _setPendingTotal(self, pendingTotal=None):
-        self._pendingTotal = pendingTotal
-    def _getPendingTotal(self):
-        return self._pendingTotal
-
-    def _setProcessingTotal(self, processingTotal=None):
-        self._processingTotal = processingTotal
-    def _getProcessingTotal(self):
-        return self._processingTotal
-
-    def _setQueuedTotal(self, queuedTotal=None):
-        self._queuedTotal = queuedTotal
-    def _getQueuedTotal(self):
-        return self._queuedTotal
-
-    def _setStartingTotal(self, startingTotal=None):
-        self._startingTotal = startingTotal
-    def _getStartingTotal(self):
-        return self._startingTotal
-
-    def _setSendingTotal(self, sendingTotal=None):
-        self._sendingTotal = sendingTotal
-    def _getSendingTotal(self):
-        return self._sendingTotal
-
-    def _setFinalizingTotal(self, finalizingTotal=None):
-        self._finalizingTotal = finalizingTotal
-    def _getFinalizingTotal(self):
-        return self._finalizingTotal
-
-    def _setDoneTotal(self, doneTotal=None):
-        self._doneTotal = doneTotal
-    def _getDoneTotal(self):
-        return self._doneTotal
-
-    pending = property(_setPendingTotal, _getPendingTotal)
-    processing = property(_setProcessingTotal, _getProcessingTotal)
-    queued = property(_setQueuedTotal, _getQueuedTotal)
-    starting = property(_setStartingTotal, _getStartingTotal)
-    sending = property(_setSendingTotal, _getSendingTotal)
-    finalizing = property(_setFinalizingTotal, _getFinalizingTotal)
-    done = property(_setDoneTotal, _getFinalizingTotal)
-
-    def __str__(self):
-        return ("pending=%s, processing=%s, queued=%s, starting=%s, sending=%s, finalizing=%s, done=%s"
-                %(self.pending, self.processing, self.queued, self.starting, self.sending, self.finalizing, self.done))
-
-class Response:
-    def __init__(self):
-        self.faxMessageStatusResultsList = []
-    def _setFaxStatusTotals(self, faxStatusTotals):
-        self._faxStatusTotals = faxStatusTotals
-    def _getFaxStatusTotals(self):
-        return self._faxStatusTotals
-
-    def _setFaxResultTotals(self, faxResultTotals):
-        self._faxResultTotals = faxResultTotals
-    def _getFaxResultTotals(self):
-        return self._faxResultTotals
-
-    def addFaxMessageStatusResults(self, faxMessageStatusResults):
-        self.faxMessageStatusResultsList.append(faxMessageStatusResults)
-    def _getFaxMessageStatusResultsList(self):
-        return self.faxMessageStatusResultsList
-
-
-
-    faxResultTotals = property(_setFaxResultTotals, _getFaxResultTotals)
-    faxStatusTotals = property(_setFaxStatusTotals, _getFaxStatusTotals)
-    faxMessageStatusResultsList = property(_getFaxMessageStatusResultsList)
-    def __str__(self):
-        return ("faxResultTotals=[%s],\n faxStatusTotals=[%s],\n faxMessageStatusResultsList=[%s]"
-                %(self.faxResultTotals, self.faxStatusTotals, self.faxMessageStatusResultsList))
-
-class FaxMessage:
-    def _setMessageRef(self, messageRef):
-        self._messageRef = messageRef
-    def _getMessageRef(self):
-        return self._messageRef
-
-    def _setSendTo(self, sendTo):
-        self._sendTo = sendTo
-    def _getSendTo(self):
-        return self._sendTo
-
-    def _setSendFrom(self, sendFrom):
-        self._sendFrom = sendFrom
-    def _getSendFrom(self):
-        return self._sendFrom
-
-    def addDocument(self, document=None):
-        self._documents.append(document)
-    def _setDocuments(self, documents=None):
-        self._documents = documents
-    def _getDocuments(self):
-        #return {'Document':self._documents}
-        return self._documents
-
-    def _setResolution(self, resolution):
-        self._resolution = resolution
-    def _getResolution(self):
-        return self._resolution
-
-    def _setBlocklist(self, blocklist=None):
-        self._blocklist = blocklist
-    def _getBlocklist(self):
-        return self._blocklist
-
-    def _setScheduledStartTime(self, scheduledStartTime):
-        self._scheduledStartTime = scheduledStartTime
-    def _getScheduledStartTime(self):
-        return self._scheduledStartTime
-
-    def _setRetries(self, retries=None):
-        self._retries = retries
-    def _getRetries(self):
-        return self._retries
-
-    def _setBusyRetries(self, busyRetries=None):
-        self._busyRetries = busyRetries
-    def _getBusyRetries(self):
-        return self._busyRetries
-
-    def _setHeaderFormat(self, headerFormat=None):
-        self._headerFormat = headerFormat
-    def _getHeaderFormat(self):
-        return self._headerFormat
-
-    messageRef = property(_setMessageRef, _getMessageRef)
-    sendFrom = property(_setSendFrom, _getSendFrom)
-    sendTo = property(_setSendTo, _getSendTo)
-    documents = property(_getDocuments)
-    resolution = property(_setResolution, _getResolution)
-    blocklist = property(_setBlocklist, _getBlocklist)
-    scheduledStartTime = property(_setScheduledStartTime, _getScheduledStartTime)
-    retries = property(_setRetries, _getRetries)
-    busyRetries = property(_setBusyRetries, _getBusyRetries)
-    headerFormat = property(_setHeaderFormat, _getHeaderFormat)
-
-class FaxMessageStatusResults:
-
-    def _setSendFrom(self, sendFrom=None):
-        self._sendFrom = sendFrom
-    def _getSendFrom(self):
-        return self._sendFrom
-
-    def _setResolution(self, resolution=None):
-        self._resolution = resolution
-    def _getResolution(self):
-        return self._resolution
-
-    def _setRetries(self, retries=None):
-        self._retries = retries
-    def _getRetries(self):
-        return self._retries
-
-    def _setBusyRetries(self, busyRetries=None):
-        self._busyRetries = busyRetries
-    def _getBusyRetries(self):
-        return self._busyRetries
-
-    def _setHeaderFormat(self, headerFormat=None):
-        self._headerFormat = headerFormat
-    def _getHeaderFormat(self):
-        return self._headerFormat
-
-    def _setMessageRef(self, messageRef=None):
-        self._messageRef = messageRef
-    def _getMessageRef(self):
-        return self._messageRef
-
-    def _setSendRef(self, sendRef=None):
-        self._sendRef = sendRef
-    def _getSendRef(self):
-        return self._sendRef
-
-    def _setBroadcastRef(self, broadcastRef=None):
-        self._broadcastRef = broadcastRef
-    def _getBroadcastRef(self):
-        return self._broadcastRef
-
-    def _setSendTo(self, sendTo=None):
-        self._sendTo = sendTo
-    def _getSendTo(self):
-        return self._sendTo
-
-    def _setStatus(self, status=None):
-        self._status = status
-    def _getStatus(self):
-        return self._status
-
-    def _setErrorCode(self, errorCode=None):
-        self._errorCode = errorCode
-    def _getErrorCode(self):
-        return self._setErrorCode
-
-    def _setErrorName(self, errorName=None):
-        self._errorName = errorName
-    def _getErrorName(self):
-        return self._errorName
-
-    def _setAttempt(self, attempt=None):
-        self._attempt = attempt
-    def _getAttempt(self):
-        return self._attempt
-
-    def _setResult(self, result=None):
-        self._result = result
-    def _getResult(self):
-        return self._result
-
-    def _setCost(self, cost=None):
-        self._cost = cost
-    def _getCost(self):
-        return self._cost
-
-    def _setPages(self, pages=None):
-        self._pages = pages
-    def _getPages(self):
-        return self._pages
-
-    def _setTotalFaxDurationt(self, totalFaxDuration=None):
-        self._totalFaxDuration = totalFaxDuration
-    def _getTotalFaxDuration(self):
-        return self._totalFaxDuration
-
-    def _setScheduledStartTime(self, scheduledStartTime=None):
-        self._scheduledStartTime = scheduledStartTime
-    def _getScheduledStartTime(self):
-        return self._scheduledStartTime
-
-    def _setDateCallStarted(self, dateCallStarted=None):
-        self._dateCallStarted = dateCallStarted
-    def _getDateCallStarted(self):
-        return self._dateCallStarted
-
-    def _setDateCallEnded(self, dateCallEnded=None):
-        self._dateCallEnded = dateCallEnded
-    def _getDateCallEnded(self):
-        return self._dateCallEnded
-
-    errorCode = property(_setErrorCode, _getErrorCode)
-    errorName = property(_setErrorName, _getErrorName)
-    sendFrom = property(_setSendFrom, _getSendFrom)
-    resolution = property(_setResolution, _getResolution)
-    retries = property(_setRetries, _getRetries)
-    busyRetries = property(_setBusyRetries, _getBusyRetries)
-    headerFormat = property(_setHeaderFormat, _getHeaderFormat)
-    messageRef = property(_setMessageRef, _getMessageRef)
-    sendRef = property(_setSendRef, _getSendRef)
-    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
-    sendTo = property(_setSendTo, _getSendTo)
-    status = property(_setStatus, _getStatus)
-    attempt = property(_setAttempt, _getAttempt)
-    result = property(_setResult, _getResult)
-    cost = property(_setCost, _getCost)
-    pages = property(_setPages, _getPages)
-    totalFaxDuration = property(_setTotalFaxDurationt, _getTotalFaxDuration)
-    scheduledStartTime = property(_setScheduledStartTime, _getScheduledStartTime)
-    dateCallStarted = property(_setDateCallStarted, _getDateCallStarted)
-    dateCallEnded = property(_setDateCallEnded, _getDateCallEnded)
-
-    def __str__(self):
-        return ("errorCode=%s, errorName=%s, sendFrom=%s, resolution=%s, retries=%s, busyRetries=%s, headerFormat=%s, messageRef=%s, sendRef=%s, broadcastRef=%s, sendTo=%s, status=%s, attempt=%s, result=%s, "
-                "cost=%s, pages=%s, totalFaxDuration=%s, scheduledStartTime=%s, dateCallStarted=%s, dateCallEnded=%s\n"
-                %(self.errorCode, self.errorName, self.sendFrom, self.resolution, self.retries, self.busyRetries, self.headerFormat, self.messageRef, self.sendRef, self.broadcastRef, self.sendTo, self.status, self.attempt, self.result,
-                self.cost, self.pages, self.totalFaxDuration, self.scheduledStartTime, self.dateCallStarted, self.dateCallEnded))
-    def __repr__(self):
-        return self.__str__()
-
-class Document:
-    def _setFileName(self, fileName):
-        self._fileName = fileName
-    def _getFileName(self):
-        return self._fileName
-
-    def _setFileData(self, fileData):
-        self.fileData = fileData
-    def _getFileData(self):
-        return self._fileDate
-
-    def _setOrder(self, order):
-        self._order = order
-    def _getOrder(self):
-        return self._order
-
-    fileName = property(_setFileName, _getFileName)
-    fileData = property(_setFileData, _getFileData)
-    order = property(_setOrder, _getOrder)
-
-class Blocklist:
-    def _setDncr(self, dncr=None):
-        self._dncr = dncr
-    def _getDncr(self):
-        return self._dncr
-
-    def _setFps(self, fps=None):
-        self._fps = fps
-    def _getFps(self):
-        return self._fps
-
-    def _setSmartblock(self, smartblock=None):
-        self._smartblock = smartblock
-    def _getSmartblock(self):
-        return self._smartblock
-
-    dncr = property(_setDncr, _getDncr)
-    fps = property(_setFps, _getFps)
-    smartblock = property(_setSmartblock, _getSmartblock)
 
 class MappingUtils:
-
+    '''
+        Abstract class that contains mapping methods.
+    '''
     def mapApiResponseToResponse(self, apiResponse):
         response = Response()
         statusTotals = FaxStatusTotals()
@@ -684,6 +146,12 @@ class MappingUtils:
         return apiFaxDocumentList
 
 class ClientWrapper(MappingUtils):
+    """
+    A custom wrapper of suds web service client for the monopond fax web services.
+    Extends mapping utils to handle mapping of api objects to client objects.
+    @ivar _client: suds client.
+    @type _client:L{Client}
+    """
     def __init__(self, url, username, password):
         self._client = Client(url)
         wsse_ns = ("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd")
@@ -748,3 +216,577 @@ class ClientWrapper(MappingUtils):
 
     def __str__(self):
         return self._client.__str__()
+
+
+class SendFaxRequest:
+    '''
+        send fax request client object
+    '''
+    def __init__(self):
+        self._faxMessages = []
+        self._documents = []
+
+    def _setBroadcastRef(self, broadcastRef=None):
+        self._broadcastRef = broadcastRef
+    def _getBroadcastRef(self):
+        return self._broadcastRef
+
+    def _setSendRef(self, sendRef=None):
+        self._sendRef = sendRef
+    def _getSendRef(self):
+        return self._sendRef
+
+    def _setResolution(self, resolution=None):
+        self._resolution = resolution
+    def _getResolution(self):
+        return self._resolution
+
+    def addFaxMessage(self, faxMessage=None):
+        self._faxMessages.append(faxMessage)
+    def _setFaxMessages(self, faxMessages=None):
+        self._faxMessages = faxMessages
+    def _getFaxMessages(self):
+        return self._faxMessages
+
+    def addDocument(self, document=None):
+        self._documents.append(document)
+    def _setDocuments(self, documents=None):
+        self._documents = documents
+    def _getDocuments(self):
+        return self._documents
+
+    def _setBlocklists(self, blocklists=None):
+        self._blocklists = blocklists
+    def _getBlocklists(self):
+        return self._blocklists
+
+    def _setSendFrom(self, sendFrom=None):
+        self._sendFrom = sendFrom
+    def _getSendFrom(self):
+        return self._sendFrom
+
+    def _setScheduledStartTime(self, scheduledStartTime=None):
+        self._scheduledStartTime = scheduledStartTime
+    def _getScheduledStartTime(self):
+        return self._scheduledStartTime
+
+    def _setRetries(self, retries=None):
+        self._retries = retries
+    def _getRetriese(self):
+        return self._retries
+
+    def _setBusyRetries(self, busyRetries=None):
+        self._busyRetries = busyRetries
+    def _getBusyRetries(self):
+        return self._busyRetries
+
+    def _setHeaderFormat(self, headerFormat=None):
+        self._headerFormat = headerFormat
+    def _getHeaderFormat(self):
+        return self._headerFormat
+
+    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
+    sendRef = property(_setSendRef, _getSendRef)
+    resolution = property(_setResolution, _getResolution)
+    faxMessages = property(_getFaxMessages)
+    documents = property(_getDocuments)
+    blocklists = property(_setBlocklists, _getBlocklists)
+    sendFrom = property(_setSendFrom, _getSendFrom)
+    scheduledStartTime = property(_setScheduledStartTime, _getScheduledStartTime)
+    retries = property(_setRetries, _getRetriese)
+    busyRetries = property(_setBusyRetries, _getBusyRetries)
+    headerFormat = property(_setHeaderFormat, _getHeaderFormat)
+
+    def __str__(self):
+        return ("broadcastRef=%s, sendRef=%s, resolution=%s,  sendFrom=%s, scheduledStartTime=%s, retries=%s, busyRetries=%s, headerFormat=%s, faxMessages=%s, documents=%s"
+                %(self.broadcastRef, self.sendRef, self.resolution, self.sendFrom, self.scheduledStartTime, self.retries, self.busyRetries, self.headerFormat, self.faxMessages, self.documents))
+
+class FaxStatusRequest:
+    '''
+        fax status request client object
+    '''
+    def _setMessageRef(self, messageRef=None):
+        self._messageRef = messageRef
+    def _getMessageRef(self):
+        return self._messageRef
+
+    def _setSendRef(self, sendRef=None):
+        self._sendRef = sendRef
+    def _getSendRef(self):
+        return self._sendRef
+
+    def _setBroadcastRef(self, broadcastRef=None):
+        self._broadcastRef = broadcastRef
+    def _getBroadcastRef(self):
+        return self._broadcastRef
+
+    def _setVerbosity(self, verbosity=None):
+        self._verbosity = verbosity
+    def _getVerbosity(self):
+        return self._verbosity
+
+    messageRef = property(_setMessageRef, _getMessageRef)
+    sendRef = property(_setSendRef, _getSendRef)
+    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
+    verbosity = property(_setVerbosity, _getVerbosity)
+
+    def __str__(self):
+        return ("messageRef=%s, sendRef=%s, broadcastRef=%s, verbosity=%s" %(self.messageRef, self.sendRef, self.broadcastRef, self.verbosity))
+
+class PauseFaxRequest:
+    '''
+        pause fax request client object
+    '''
+    def _setMessageRef(self, messageRef=None):
+        self._messageRef = messageRef
+    def _getMessageRef(self):
+        return self._messageRef
+
+    def _setSendRef(self, sendRef=None):
+        self._sendRef = sendRef
+    def _getSendRef(self):
+        return self._sendRef
+
+    def _setBroadcastRef(self, broadcastRef=None):
+        self._broadcastRef = broadcastRef
+    def _getBroadcastRef(self):
+        return self._broadcastRef
+
+    messageRef = property(_setMessageRef, _getMessageRef)
+    sendRef = property(_setSendRef, _getSendRef)
+    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
+
+    def __str__(self):
+        return ("messageRef=%s, sendRef=%s, broadcastRef=%s" %(self.messageRef, self.sendRef, self.broadcastRef))
+
+
+class ResumeFaxRequest:
+    '''
+        resume fax request client object
+    '''
+    def _setMessageRef(self, messageRef=None):
+        self._messageRef = messageRef
+    def _getMessageRef(self):
+        return self._messageRef
+
+    def _setSendRef(self, sendRef=None):
+        self._sendRef = sendRef
+    def _getSendRef(self):
+        return self._sendRef
+
+    def _setBroadcastRef(self, broadcastRef=None):
+        self._broadcastRef = broadcastRef
+    def _getBroadcastRef(self):
+        return self._broadcastRef
+
+    messageRef = property(_setMessageRef, _getMessageRef)
+    sendRef = property(_setSendRef, _getSendRef)
+    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
+
+    def __str__(self):
+        return ("messageRef=%s, sendRef=%s, broadcastRef=%s" %(self.messageRef, self.sendRef, self.broadcastRef))
+
+class StopFaxRequest:
+    '''
+        stop fax request client object
+    '''
+    def _setMessageRef(self, messageRef=None):
+        self._messageRef = messageRef
+    def _getMessageRef(self):
+        return self._messageRef
+
+    def _setSendRef(self, sendRef=None):
+        self._sendRef = sendRef
+    def _getSendRef(self):
+        return self._sendRef
+
+    def _setBroadcastRef(self, broadcastRef=None):
+        self._broadcastRef = broadcastRef
+    def _getBroadcastRef(self):
+        return self._broadcastRef
+
+    messageRef = property(_setMessageRef, _getMessageRef)
+    sendRef = property(_setSendRef, _getSendRef)
+    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
+
+    def __str__(self):
+        return ("messageRef=%s, sendRef=%s, broadcastRef=%s" %(self.messageRef, self.sendRef, self.broadcastRef))
+
+class FaxResultsTotals:
+    '''
+        fax result totals client object
+    '''
+    def __init__(self):
+        self._faxMessages = []
+
+    def _setSuccessTotal(self, total=None):
+        self._successTotal = total
+    def _getSuccessTotal(self):
+        return self._successTotal
+
+    def _setBlockedTotal(self, total=None):
+        self._blockedTotal = total
+    def _getBlockedTotal(self):
+        return self._blockedTotal
+
+    def _setFailedTotal(self, total=None):
+        self._failedTotal = total
+    def _getFailedTotall(self):
+        return self._failedTotal
+
+    def _setTotalAttempts(self, total=None):
+        self._totalAttempts = total
+    def _getotalAttempts(self):
+        return self._totalAttempts
+
+    def _setTotalFaxDuration(self, total=None):
+        self._totalFaxDuration = total
+    def _getTotalFaxDuration(self):
+        return self._totalFaxDuration
+
+    def _setTotalPages(self, total=None):
+        self._totalPages = total
+    def _getTotalPages(self):
+        return self._totalPages
+
+    successTotal = property(_setSuccessTotal, _getSuccessTotal)
+    blockedTotal = property(_setBlockedTotal, _getBlockedTotal)
+    failedTotal = property(_setFailedTotal, _getFailedTotall)
+    totalAttempts = property(_setTotalAttempts, _getTotalFaxDuration)
+    totalFaxDuration = property(_setTotalFaxDuration, _getTotalFaxDuration)
+    totalPages = property(_setTotalPages, _getTotalPages)
+    #faxMessages = property(_getFaxMessages)
+    def __str__(self):
+        return ("successTotal=%s, blockedTotal=%s, failedTotal=%s, totalAttempts=%s, totalFaxDuration=%s, totalPages=%s"
+                %(self.successTotal, self.blockedTotal, self.failedTotal, self.totalAttempts, self.totalFaxDuration, self.totalPages))
+
+
+class FaxStatusTotals:
+    '''
+        fax status totals client object
+    '''
+    def _setPendingTotal(self, pendingTotal=None):
+        self._pendingTotal = pendingTotal
+    def _getPendingTotal(self):
+        return self._pendingTotal
+
+    def _setProcessingTotal(self, processingTotal=None):
+        self._processingTotal = processingTotal
+    def _getProcessingTotal(self):
+        return self._processingTotal
+
+    def _setQueuedTotal(self, queuedTotal=None):
+        self._queuedTotal = queuedTotal
+    def _getQueuedTotal(self):
+        return self._queuedTotal
+
+    def _setStartingTotal(self, startingTotal=None):
+        self._startingTotal = startingTotal
+    def _getStartingTotal(self):
+        return self._startingTotal
+
+    def _setSendingTotal(self, sendingTotal=None):
+        self._sendingTotal = sendingTotal
+    def _getSendingTotal(self):
+        return self._sendingTotal
+
+    def _setFinalizingTotal(self, finalizingTotal=None):
+        self._finalizingTotal = finalizingTotal
+    def _getFinalizingTotal(self):
+        return self._finalizingTotal
+
+    def _setDoneTotal(self, doneTotal=None):
+        self._doneTotal = doneTotal
+    def _getDoneTotal(self):
+        return self._doneTotal
+
+    pending = property(_setPendingTotal, _getPendingTotal)
+    processing = property(_setProcessingTotal, _getProcessingTotal)
+    queued = property(_setQueuedTotal, _getQueuedTotal)
+    starting = property(_setStartingTotal, _getStartingTotal)
+    sending = property(_setSendingTotal, _getSendingTotal)
+    finalizing = property(_setFinalizingTotal, _getFinalizingTotal)
+    done = property(_setDoneTotal, _getFinalizingTotal)
+
+    def __str__(self):
+        return ("pending=%s, processing=%s, queued=%s, starting=%s, sending=%s, finalizing=%s, done=%s"
+                %(self.pending, self.processing, self.queued, self.starting, self.sending, self.finalizing, self.done))
+
+class Response:
+    '''
+        response client object
+        mapped to all types of api responses
+    '''
+    def __init__(self):
+        self.faxMessageStatusResultsList = []
+    def _setFaxStatusTotals(self, faxStatusTotals):
+        self._faxStatusTotals = faxStatusTotals
+    def _getFaxStatusTotals(self):
+        return self._faxStatusTotals
+
+    def _setFaxResultTotals(self, faxResultTotals):
+        self._faxResultTotals = faxResultTotals
+    def _getFaxResultTotals(self):
+        return self._faxResultTotals
+
+    def addFaxMessageStatusResults(self, faxMessageStatusResults):
+        self.faxMessageStatusResultsList.append(faxMessageStatusResults)
+    def _getFaxMessageStatusResultsList(self):
+        return self.faxMessageStatusResultsList
+
+
+
+    faxResultTotals = property(_setFaxResultTotals, _getFaxResultTotals)
+    faxStatusTotals = property(_setFaxStatusTotals, _getFaxStatusTotals)
+    faxMessageStatusResultsList = property(_getFaxMessageStatusResultsList)
+    def __str__(self):
+        return ("faxResultTotals=[%s],\n faxStatusTotals=[%s],\n faxMessageStatusResultsList=[%s]"
+                %(self.faxResultTotals, self.faxStatusTotals, self.faxMessageStatusResultsList))
+
+class FaxMessage:
+    '''
+        fax message client object
+    '''
+    def _setMessageRef(self, messageRef):
+        self._messageRef = messageRef
+    def _getMessageRef(self):
+        return self._messageRef
+
+    def _setSendTo(self, sendTo):
+        self._sendTo = sendTo
+    def _getSendTo(self):
+        return self._sendTo
+
+    def _setSendFrom(self, sendFrom):
+        self._sendFrom = sendFrom
+    def _getSendFrom(self):
+        return self._sendFrom
+
+    def addDocument(self, document=None):
+        self._documents.append(document)
+    def _setDocuments(self, documents=None):
+        self._documents = documents
+    def _getDocuments(self):
+        #return {'Document':self._documents}
+        return self._documents
+
+    def _setResolution(self, resolution):
+        self._resolution = resolution
+    def _getResolution(self):
+        return self._resolution
+
+    def _setBlocklist(self, blocklist=None):
+        self._blocklist = blocklist
+    def _getBlocklist(self):
+        return self._blocklist
+
+    def _setScheduledStartTime(self, scheduledStartTime):
+        self._scheduledStartTime = scheduledStartTime
+    def _getScheduledStartTime(self):
+        return self._scheduledStartTime
+
+    def _setRetries(self, retries=None):
+        self._retries = retries
+    def _getRetries(self):
+        return self._retries
+
+    def _setBusyRetries(self, busyRetries=None):
+        self._busyRetries = busyRetries
+    def _getBusyRetries(self):
+        return self._busyRetries
+
+    def _setHeaderFormat(self, headerFormat=None):
+        self._headerFormat = headerFormat
+    def _getHeaderFormat(self):
+        return self._headerFormat
+
+    messageRef = property(_setMessageRef, _getMessageRef)
+    sendFrom = property(_setSendFrom, _getSendFrom)
+    sendTo = property(_setSendTo, _getSendTo)
+    documents = property(_getDocuments)
+    resolution = property(_setResolution, _getResolution)
+    blocklist = property(_setBlocklist, _getBlocklist)
+    scheduledStartTime = property(_setScheduledStartTime, _getScheduledStartTime)
+    retries = property(_setRetries, _getRetries)
+    busyRetries = property(_setBusyRetries, _getBusyRetries)
+    headerFormat = property(_setHeaderFormat, _getHeaderFormat)
+
+class FaxMessageStatusResults:
+    '''
+        fax message status results client object
+    '''
+    def _setSendFrom(self, sendFrom=None):
+        self._sendFrom = sendFrom
+    def _getSendFrom(self):
+        return self._sendFrom
+
+    def _setResolution(self, resolution=None):
+        self._resolution = resolution
+    def _getResolution(self):
+        return self._resolution
+
+    def _setRetries(self, retries=None):
+        self._retries = retries
+    def _getRetries(self):
+        return self._retries
+
+    def _setBusyRetries(self, busyRetries=None):
+        self._busyRetries = busyRetries
+    def _getBusyRetries(self):
+        return self._busyRetries
+
+    def _setHeaderFormat(self, headerFormat=None):
+        self._headerFormat = headerFormat
+    def _getHeaderFormat(self):
+        return self._headerFormat
+
+    def _setMessageRef(self, messageRef=None):
+        self._messageRef = messageRef
+    def _getMessageRef(self):
+        return self._messageRef
+
+    def _setSendRef(self, sendRef=None):
+        self._sendRef = sendRef
+    def _getSendRef(self):
+        return self._sendRef
+
+    def _setBroadcastRef(self, broadcastRef=None):
+        self._broadcastRef = broadcastRef
+    def _getBroadcastRef(self):
+        return self._broadcastRef
+
+    def _setSendTo(self, sendTo=None):
+        self._sendTo = sendTo
+    def _getSendTo(self):
+        return self._sendTo
+
+    def _setStatus(self, status=None):
+        self._status = status
+    def _getStatus(self):
+        return self._status
+
+    def _setErrorCode(self, errorCode=None):
+        self._errorCode = errorCode
+    def _getErrorCode(self):
+        return self._setErrorCode
+
+    def _setErrorName(self, errorName=None):
+        self._errorName = errorName
+    def _getErrorName(self):
+        return self._errorName
+
+    def _setAttempt(self, attempt=None):
+        self._attempt = attempt
+    def _getAttempt(self):
+        return self._attempt
+
+    def _setResult(self, result=None):
+        self._result = result
+    def _getResult(self):
+        return self._result
+
+    def _setCost(self, cost=None):
+        self._cost = cost
+    def _getCost(self):
+        return self._cost
+
+    def _setPages(self, pages=None):
+        self._pages = pages
+    def _getPages(self):
+        return self._pages
+
+    def _setTotalFaxDurationt(self, totalFaxDuration=None):
+        self._totalFaxDuration = totalFaxDuration
+    def _getTotalFaxDuration(self):
+        return self._totalFaxDuration
+
+    def _setScheduledStartTime(self, scheduledStartTime=None):
+        self._scheduledStartTime = scheduledStartTime
+    def _getScheduledStartTime(self):
+        return self._scheduledStartTime
+
+    def _setDateCallStarted(self, dateCallStarted=None):
+        self._dateCallStarted = dateCallStarted
+    def _getDateCallStarted(self):
+        return self._dateCallStarted
+
+    def _setDateCallEnded(self, dateCallEnded=None):
+        self._dateCallEnded = dateCallEnded
+    def _getDateCallEnded(self):
+        return self._dateCallEnded
+
+    errorCode = property(_setErrorCode, _getErrorCode)
+    errorName = property(_setErrorName, _getErrorName)
+    sendFrom = property(_setSendFrom, _getSendFrom)
+    resolution = property(_setResolution, _getResolution)
+    retries = property(_setRetries, _getRetries)
+    busyRetries = property(_setBusyRetries, _getBusyRetries)
+    headerFormat = property(_setHeaderFormat, _getHeaderFormat)
+    messageRef = property(_setMessageRef, _getMessageRef)
+    sendRef = property(_setSendRef, _getSendRef)
+    broadcastRef = property(_setBroadcastRef, _getBroadcastRef)
+    sendTo = property(_setSendTo, _getSendTo)
+    status = property(_setStatus, _getStatus)
+    attempt = property(_setAttempt, _getAttempt)
+    result = property(_setResult, _getResult)
+    cost = property(_setCost, _getCost)
+    pages = property(_setPages, _getPages)
+    totalFaxDuration = property(_setTotalFaxDurationt, _getTotalFaxDuration)
+    scheduledStartTime = property(_setScheduledStartTime, _getScheduledStartTime)
+    dateCallStarted = property(_setDateCallStarted, _getDateCallStarted)
+    dateCallEnded = property(_setDateCallEnded, _getDateCallEnded)
+
+    def __str__(self):
+        return ("errorCode=%s, errorName=%s, sendFrom=%s, resolution=%s, retries=%s, busyRetries=%s, headerFormat=%s, messageRef=%s, sendRef=%s, broadcastRef=%s, sendTo=%s, status=%s, attempt=%s, result=%s, "
+                "cost=%s, pages=%s, totalFaxDuration=%s, scheduledStartTime=%s, dateCallStarted=%s, dateCallEnded=%s\n"
+                %(self.errorCode, self.errorName, self.sendFrom, self.resolution, self.retries, self.busyRetries, self.headerFormat, self.messageRef, self.sendRef, self.broadcastRef, self.sendTo, self.status, self.attempt, self.result,
+                self.cost, self.pages, self.totalFaxDuration, self.scheduledStartTime, self.dateCallStarted, self.dateCallEnded))
+    def __repr__(self):
+        return self.__str__()
+
+class Document:
+    '''
+        Document client object
+    '''
+    def _setFileName(self, fileName):
+        self._fileName = fileName
+    def _getFileName(self):
+        return self._fileName
+
+    def _setFileData(self, fileData):
+        self.fileData = fileData
+    def _getFileData(self):
+        return self._fileDate
+
+    def _setOrder(self, order):
+        self._order = order
+    def _getOrder(self):
+        return self._order
+
+    fileName = property(_setFileName, _getFileName)
+    fileData = property(_setFileData, _getFileData)
+    order = property(_setOrder, _getOrder)
+
+class Blocklist:
+    '''
+        blocklist client object
+    '''
+    def _setDncr(self, dncr=None):
+        self._dncr = dncr
+    def _getDncr(self):
+        return self._dncr
+
+    def _setFps(self, fps=None):
+        self._fps = fps
+    def _getFps(self):
+        return self._fps
+
+    def _setSmartblock(self, smartblock=None):
+        self._smartblock = smartblock
+    def _getSmartblock(self):
+        return self._smartblock
+
+    dncr = property(_setDncr, _getDncr)
+    fps = property(_setFps, _getFps)
+    smartblock = property(_setSmartblock, _getSmartblock)
+
