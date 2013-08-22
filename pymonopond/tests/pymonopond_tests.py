@@ -24,7 +24,11 @@ class TestClientFunctions(unittest.TestCase):
         pass
 
     def testMapApiResponseToResponse(self):
-        client = ClientWrapper('faxapi-v2.wsdl','user','pass')
+        client = mock(Client)
+        mappingUtils = MappingUtils(client)
+        client.service = mock(ServiceSelector)
+        client.factory = mock(Factory)
+        when(client.factory).create(any()).thenReturn(StubObject())
         apiResponse = StubObject()
         apiResponse.FaxStatusTotals = self.initializeStatusTotals()
         apiResponse.FaxResultsTotals = self.initializeResultTotals()
@@ -36,7 +40,7 @@ class TestClientFunctions(unittest.TestCase):
         faxMessages = StubObject()
         apiResponse.FaxMessages = faxMessages
         apiResponse.FaxMessages.FaxMessage=[apiFaxMessageStatus,]
-        response = client.mapApiResponseToResponse(apiResponse)
+        response = mappingUtils.mapApiResponseToResponse(apiResponse)
 
         self.assertEqual(4,response.faxResultTotals.successTotal)
         self.assertEqual(2,response.faxResultTotals.blockedTotal)
@@ -71,10 +75,13 @@ class TestClientFunctions(unittest.TestCase):
 
 
     def testMapDocumentListToApiFaxDocumentList(self):
-        client = ClientWrapper('file:///home/froilan/Documents/ut_2/ut/idea/pymonopond/tests/faxapi-v2.wsdl','user','pass')
-
+        client = mock(Client)
+        mappingUtils = MappingUtils(client)
+        client.service = mock(ServiceSelector)
+        client.factory = mock(Factory)
+        when(client.factory).create(any()).thenReturn(StubObject())
         documentList = [self.initialize_document(), self.initialize_document()]
-        apiFaxDocumentList = client.mapDocumentListToApiFaxDocumentList(documentList)
+        apiFaxDocumentList = mappingUtils.mapDocumentListToApiFaxDocumentList(documentList)
 
         apiFaxDocumentList = apiFaxDocumentList.get('Document')
         self.assertEqual('test', apiFaxDocumentList[0].FileName)
@@ -85,18 +92,25 @@ class TestClientFunctions(unittest.TestCase):
         self.assertEqual(0, apiFaxDocumentList[1].Order)
 
     def testMapBlocklistsToApiFaxMessageBlocklist(self):
-        client = ClientWrapper('file:///home/froilan/Documents/ut_2/ut/idea/pymonopond/tests/faxapi-v2.wsdl','user','pass')
-
+        client = mock(Client)
+        mappingUtils = MappingUtils(client)
+        client.service = mock(ServiceSelector)
+        client.factory = mock(Factory)
+        when(client.factory).create(any()).thenReturn(StubObject())
         blocklist = self.initialize_blocklist()
-        apiFaxMessageBlocklist = client.mapBlocklistsToApiFaxMessageBlocklist(blocklist)
+        apiFaxMessageBlocklist = mappingUtils.mapBlocklistsToApiFaxMessageBlocklist(blocklist)
         self.assertEqual('true', apiFaxMessageBlocklist._dncr)
         self.assertEqual('false', apiFaxMessageBlocklist._fps)
         self.assertEqual('false', apiFaxMessageBlocklist._smartblock)
 
     def testMapFaxMessageListToApiFaxMessageList(self):
-        client = ClientWrapper('file:///home/froilan/Documents/ut_2/ut/idea/pymonopond/tests/faxapi-v2.wsdl','user','pass')
+        client = mock(Client)
+        mappingUtils = MappingUtils(client)
+        client.service = mock(ServiceSelector)
+        client.factory = mock(Factory)
+        when(client.factory).create(any()).thenReturn(StubObject())
         faxMessageList = [self.initialize_message(), self.initialize_message()]
-        apiFaxMessageList = client.mapFaxMessageListToApiFaxMessageList(faxMessageList)
+        apiFaxMessageList = mappingUtils.mapFaxMessageListToApiFaxMessageList(faxMessageList)
 
         apiFaxMessageList = apiFaxMessageList.get('FaxMessage')
         apiFaxMessageList

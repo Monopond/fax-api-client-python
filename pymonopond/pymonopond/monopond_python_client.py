@@ -8,6 +8,9 @@ class MappingUtils:
     '''
         Abstract class that contains mapping methods.
     '''
+    def __init__(self, client):
+        self._client = client
+
     def mapApiResponseToResponse(self, apiResponse):
         response = Response()
         statusTotals = FaxStatusTotals()
@@ -145,7 +148,7 @@ class MappingUtils:
         apiFaxDocumentList = {'Document':apiFaxDocumentList}
         return apiFaxDocumentList
 
-class ClientWrapper(MappingUtils):
+class ClientWrapper:
     """
     A custom wrapper of suds web service client for the monopond fax web services.
     Extends mapping utils to handle mapping of api objects to client objects.
@@ -164,18 +167,20 @@ class ClientWrapper(MappingUtils):
         security_header.insert(message_header)
         self._client.set_options(soapheaders = security_header)
 
+        self.mappingUtils = MappingUtils(self._client)
+
     def sendFax(self, request):
         if isinstance(request, SendFaxRequest) is False:
             raise TypeError, "%s incorrect request type" % (request.__class__)
-        apiFaxDocuments = self.mapDocumentListToApiFaxDocumentList(request.documents)
-        apiFaxMessages = self.mapFaxMessageListToApiFaxMessageList(request.faxMessages)
+        apiFaxDocuments = self.mappingUtils.mapDocumentListToApiFaxDocumentList(request.documents)
+        apiFaxMessages = self.mappingUtils.mapFaxMessageListToApiFaxMessageList(request.faxMessages)
         apiFaxMessageBlocklist = None
         if request.blocklists is not None:
-            apiFaxMessageBlocklist = self.mapBlocklistsToApiFaxMessageBlocklist(request.blocklists)
+            apiFaxMessageBlocklist = self.mappingUtils.mapBlocklistsToApiFaxMessageBlocklist(request.blocklists)
         result = self._client.service.SendFax(BroadcastRef=request.broadcastRef, SendRef=request.sendRef,
             FaxMessages= apiFaxMessages, Documents=apiFaxDocuments, Resolution=request.resolution,
             Blocklists = apiFaxMessageBlocklist, Retries=request.retries, HeaderFormat=request.headerFormat)
-        wrappedResult = self.mapApiResponseToResponse(result)
+        wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
         return wrappedResult
 
     def faxStatus(self, request):
@@ -183,7 +188,7 @@ class ClientWrapper(MappingUtils):
             raise TypeError, "%s incorrect request type" % (request.__class__)
         result = self._client.service.FaxStatus(MessageRef=request.messageRef, SendRef=request.sendRef,
             BroadcastRef=request.broadcastRef, Verbosity=request.verbosity)
-        wrappedResult = self.mapApiResponseToResponse(result)
+        wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
         return wrappedResult
 
     def pauseFax(self, request):
@@ -191,7 +196,7 @@ class ClientWrapper(MappingUtils):
             raise TypeError, "%s incorrect request type" % (request.__class__)
         result = self._client.service.PauseFax(MessageRef=request.messageRef, SendRef=request.sendRef,
             BroadcastRef=request.broadcastRef)
-        wrappedResult = self.mapApiResponseToResponse(result)
+        wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
         return wrappedResult
 
     def resumeFax(self, request):
@@ -199,7 +204,7 @@ class ClientWrapper(MappingUtils):
             raise TypeError, "%s incorrect request type" % (request.__class__)
         result = self._client.service.ResumeFax(MessageRef=request.messageRef, SendRef=request.sendRef,
             BroadcastRef=request.broadcastRef)
-        wrappedResult = self.mapApiResponseToResponse(result)
+        wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
         return wrappedResult
 
     def stopFax(self, request):
@@ -207,7 +212,7 @@ class ClientWrapper(MappingUtils):
             raise TypeError, "%s incorrect request type" % (request.__class__)
         result = self._client.service.StopFax(MessageRef=request.messageRef, SendRef=request.sendRef,
             BroadcastRef=request.broadcastRef)
-        wrappedResult = self.mapApiResponseToResponse(result)
+        wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
         print result
         return wrappedResult
 
