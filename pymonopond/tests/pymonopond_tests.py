@@ -73,7 +73,6 @@ class TestClientFunctions(unittest.TestCase):
         self.assertEqual('date',response.faxMessageStatusResultsList[0].dateCallStarted)
         self.assertEqual('2010-10-10T00:00:10Z',response.faxMessageStatusResultsList[0].dateCallEnded)
 
-
     def testMapDocumentListToApiFaxDocumentList(self):
         client = mock(Client)
         mappingUtils = MappingUtils(client)
@@ -156,7 +155,9 @@ class TestClientFunctions(unittest.TestCase):
         sendFaxRequest.headerFormat="test"
         sendFaxRequest.retries=0
         sendFaxRequest.headerFormat="1-1-1"
-        sendFaxRequest.faxMessages = [self.initialize_message(), self.initialize_message()]
+        # sendFaxRequest.faxMessages = [self.initialize_message(), self.initialize_message()]
+        sendFaxRequest.addFaxMessage(self.initialize_message())
+        sendFaxRequest.addFaxMessage(self.initialize_message())
 
         when(client._client.factory).create(any()).thenReturn(StubObject())
         client.sendFax(sendFaxRequest)
@@ -300,10 +301,11 @@ class TestClientFunctions(unittest.TestCase):
         faxMessage.sendTo = '61280039890'
         faxMessage.sendFrom = '123'
         document = self.initialize_document()
-        documents = [document, document]
+        # documents = [document, document]
         blocklists = self.initialize_blocklist()
         faxMessage.blocklist = blocklists
-        faxMessage.documents = documents
+        faxMessage.addDocument(document)
+        faxMessage.addDocument(document)
         faxMessage.scheduledStartTime = None
         faxMessage.retries = 3
         faxMessage.busyRetries = 4
