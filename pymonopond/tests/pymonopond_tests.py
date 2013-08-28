@@ -258,7 +258,7 @@ class TestClientFunctions(unittest.TestCase):
         return client
 
     def initialize_document(self):
-        document = Document()
+        document = FaxDocument()
         document.fileName = 'test'
         document.fileData = 'VGhpcyBpcyBhbm90aGVyIGZheA=='
         document.order = 0

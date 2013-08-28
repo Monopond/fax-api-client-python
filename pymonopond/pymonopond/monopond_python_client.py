@@ -553,7 +553,7 @@ class FaxMessage:
         fax message client object
     '''
     def __init__(self):
-        self.documents = []
+        self._documents = []
 
     def _setMessageRef(self, messageRef):
         self._messageRef = messageRef
@@ -752,28 +752,40 @@ class FaxMessageStatusResults:
     def __repr__(self):
         return self.__str__()
 
-class Document:
+class FaxDocument(object):
     '''
         Document client object
     '''
-    def _setFileName(self, fileName):
-        self._fileName = fileName
-    def _getFileName(self):
+    def __init__(self):
+        self._fileData = None
+        self._fileName = None
+        self._order = None
+
+    @property
+    def fileName(self):
         return self._fileName
+    @fileName.setter
+    def fileName(self, fileName):
+        self._fileName = fileName
 
-    def _setFileData(self, fileData):
-        self.fileData = fileData
-    def _getFileData(self):
-        return self._fileDate
+    @property
+    def fileData(self):
+        return self._fileData
+    @fileData.setter
+    def fileData(self, fileData):
+        self._fileData = fileData
 
-    def _setOrder(self, order):
-        self._order = order
-    def _getOrder(self):
+    @property
+    def order(self):
         return self._order
+    @order.setter
+    def order(self, order):
+        self._order = order
 
-    fileName = property(_setFileName, _getFileName)
-    fileData = property(_setFileData, _getFileData)
-    order = property(_setOrder, _getOrder)
+
+    #fileName = property( _setFileName,_getFileName)
+    #fileData = property(_setFileData, _getFileData)
+    #order = property(_setOrder, _getOrder)
 
 class Blocklist:
     '''
