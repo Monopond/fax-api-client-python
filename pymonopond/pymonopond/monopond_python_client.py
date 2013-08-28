@@ -2,6 +2,8 @@
 from suds.client import Client
 from suds.bindings import binding
 from suds.sax.element import Element, Attribute
+import base64
+import os
 
 
 class MappingUtils:
@@ -759,21 +761,32 @@ class FaxDocument(object):
     def __init__(self):
         self._fileData = None
         self._fileName = None
+        self._filePath = None
         self._order = None
+
+    @property
+    def filePath(self):
+        return self._filePath
+    @filePath.setter
+    def filePath(self, filePath):
+        self._fileName = self.fileParser(filePath)
+        file = open(filePath, "rb")
+        binary_data = file.read()
+        file.close()
+        self._fileData = base64.b64encode(binary_data)
 
     @property
     def fileName(self):
         return self._fileName
-    @fileName.setter
-    def fileName(self, fileName):
-        self._fileName = fileName
+    # @fileName.setter
+    # def fileName(self, fileName):
 
     @property
     def fileData(self):
         return self._fileData
-    @fileData.setter
-    def fileData(self, fileData):
-        self._fileData = fileData
+    # @fileData.setter
+    # def fileData(self, fileData):
+    #     self._fileData = fileData
 
     @property
     def order(self):
@@ -782,10 +795,10 @@ class FaxDocument(object):
     def order(self, order):
         self._order = order
 
+    def fileParser(self, fileName):
+        parsedFilePath = os.path.split(fileName)
+        return parsedFilePath[1]
 
-    #fileName = property( _setFileName,_getFileName)
-    #fileData = property(_setFileData, _getFileData)
-    #order = property(_setOrder, _getOrder)
 
 class Blocklist:
     '''

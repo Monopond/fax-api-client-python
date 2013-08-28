@@ -84,11 +84,11 @@ class TestClientFunctions(unittest.TestCase):
         apiFaxDocumentList = mappingUtils.mapDocumentListToApiFaxDocumentList(documentList)
 
         apiFaxDocumentList = apiFaxDocumentList.get('Document')
-        self.assertEqual('test', apiFaxDocumentList[0].FileName)
-        self.assertEqual('VGhpcyBpcyBhbm90aGVyIGZheA==', apiFaxDocumentList[0].FileData)
+        self.assertEqual('sampleFile.txt', apiFaxDocumentList[0].FileName)
+        self.assertEqual('VGhpcyBpcyBhIHRlc3QgdGV4dCBmaWxl', apiFaxDocumentList[0].FileData)
         self.assertEqual(0, apiFaxDocumentList[0].Order)
-        self.assertEqual('test', apiFaxDocumentList[1].FileName)
-        self.assertEqual('VGhpcyBpcyBhbm90aGVyIGZheA==', apiFaxDocumentList[1].FileData)
+        self.assertEqual('sampleFile.txt', apiFaxDocumentList[1].FileName)
+        self.assertEqual('VGhpcyBpcyBhIHRlc3QgdGV4dCBmaWxl', apiFaxDocumentList[1].FileData)
         self.assertEqual(0, apiFaxDocumentList[1].Order)
 
     def testMapBlocklistsToApiFaxMessageBlocklist(self):
@@ -119,19 +119,19 @@ class TestClientFunctions(unittest.TestCase):
         self.assertEqual('123', apiFaxMessageList[0].SendFrom)
         apiFaxDocumentList = apiFaxMessageList[0].Documents
         apiFaxDocumentList = apiFaxDocumentList.get('Document')
-        self.assertEqual('test', apiFaxDocumentList[0].FileName)
-        self.assertEqual('VGhpcyBpcyBhbm90aGVyIGZheA==', apiFaxDocumentList[0].FileData)
+        self.assertEqual('sampleFile.txt', apiFaxDocumentList[0].FileName)
+        self.assertEqual('VGhpcyBpcyBhIHRlc3QgdGV4dCBmaWxl', apiFaxDocumentList[0].FileData)
         self.assertEqual(0, apiFaxDocumentList[0].Order)
-        self.assertEqual('test', apiFaxDocumentList[1].FileName)
-        self.assertEqual('VGhpcyBpcyBhbm90aGVyIGZheA==', apiFaxDocumentList[1].FileData)
+        self.assertEqual('sampleFile.txt', apiFaxDocumentList[1].FileName)
+        self.assertEqual('VGhpcyBpcyBhIHRlc3QgdGV4dCBmaWxl', apiFaxDocumentList[1].FileData)
         self.assertEqual(0, apiFaxDocumentList[1].Order)
         apiFaxDocumentList = apiFaxMessageList[1].Documents
         apiFaxDocumentList = apiFaxDocumentList.get('Document')
-        self.assertEqual('test', apiFaxDocumentList[0].FileName)
-        self.assertEqual('VGhpcyBpcyBhbm90aGVyIGZheA==', apiFaxDocumentList[0].FileData)
+        self.assertEqual('sampleFile.txt', apiFaxDocumentList[0].FileName)
+        self.assertEqual('VGhpcyBpcyBhIHRlc3QgdGV4dCBmaWxl', apiFaxDocumentList[0].FileData)
         self.assertEqual(0, apiFaxDocumentList[0].Order)
-        self.assertEqual('test', apiFaxDocumentList[1].FileName)
-        self.assertEqual('VGhpcyBpcyBhbm90aGVyIGZheA==', apiFaxDocumentList[1].FileData)
+        self.assertEqual('sampleFile.txt', apiFaxDocumentList[1].FileName)
+        self.assertEqual('VGhpcyBpcyBhIHRlc3QgdGV4dCBmaWxl', apiFaxDocumentList[1].FileData)
         self.assertEqual(0, apiFaxDocumentList[1].Order)
         apiFaxMessageBlocklist = apiFaxMessageList[0].Blocklists
         self.assertEqual('true', apiFaxMessageBlocklist._dncr)
@@ -250,6 +250,30 @@ class TestClientFunctions(unittest.TestCase):
         with self.assertRaises(TypeError):
             client.faxStatus(StubObject())
 
+    def testFileNameIsConvertedToBase64FileData(self):
+        document = self.initialize_document()
+        self.assertEqual("VGhpcyBpcyBhIHRlc3QgdGV4dCBmaWxl", document.fileData)
+
+    def testFileParserWithOnlyTheFileNameReturnsOnlyTheFileName(self):
+        document = FaxDocument()
+        parsed = document.fileParser("file.txt")
+        self.assertEqual("file.txt", parsed)
+
+    def testFileParserWithOneLevelDirectoryReturnsOnlyTheFileName(self):
+        document = FaxDocument()
+        parsed = document.fileParser("/home/file.txt")
+        self.assertEqual("file.txt", parsed)
+
+    def testFileParserWithTwoLevelDirectoryReturnsOnlyTheFileName(self):
+        document = FaxDocument()
+        parsed = document.fileParser("/home/someDirectory/file.txt")
+        self.assertEqual("file.txt", parsed)
+
+    def testFileParserWithTwoLevelDirectoryReturnsOnlyTheFileName(self):
+        document = FaxDocument()
+        parsed = document.fileParser("home/somedirectory/file.txt")
+        self.assertEqual("file.txt", parsed)
+
     def mockClient(self):
         client = ClientWrapper('file:///' + os.path.join(os.path.dirname(__file__), 'faxapi-v2.wsdl'),'user','pass')
         client._client = mock(Client)
@@ -259,8 +283,7 @@ class TestClientFunctions(unittest.TestCase):
 
     def initialize_document(self):
         document = FaxDocument()
-        document.fileName = 'test'
-        document.fileData = 'VGhpcyBpcyBhbm90aGVyIGZheA=='
+        document.filePath = 'sampleFile.txt'
         document.order = 0
         return document
 
