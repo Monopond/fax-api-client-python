@@ -18,19 +18,19 @@ class MappingUtils(object):
         statusTotals = FaxStatusTotals()
         if hasattr(apiResponse, 'FaxStatusTotals'):
             if hasattr(apiResponse.FaxStatusTotals, '_pending'):
-                statusTotals.pending = apiResponse.FaxStatusTotals._pending
+                statusTotals.pendingTotal = apiResponse.FaxStatusTotals._pending
             if hasattr(apiResponse.FaxStatusTotals, '_processing'):
-                statusTotals.processing = apiResponse.FaxStatusTotals._processing
+                statusTotals.processingTotal = apiResponse.FaxStatusTotals._processing
             if hasattr(apiResponse.FaxStatusTotals, '_queued'):
-                statusTotals.queued = apiResponse.FaxStatusTotals._queued
+                statusTotals.queuedTotal = apiResponse.FaxStatusTotals._queued
             if hasattr(apiResponse.FaxStatusTotals, '_starting'):
-                statusTotals.starting = apiResponse.FaxStatusTotals._starting
+                statusTotals.startingTotal = apiResponse.FaxStatusTotals._starting
             if hasattr(apiResponse.FaxStatusTotals, '_sending'):
-                statusTotals.sending = apiResponse.FaxStatusTotals._sending
+                statusTotals.sendingTotal = apiResponse.FaxStatusTotals._sending
             if hasattr(apiResponse.FaxStatusTotals, '_finalizing'):
-                statusTotals.finalizing = apiResponse.FaxStatusTotals._finalizing
+                statusTotals.finalizingTotal = apiResponse.FaxStatusTotals._finalizing
             if hasattr(apiResponse.FaxStatusTotals, '_done'):
-                statusTotals.done = apiResponse.FaxStatusTotals._done
+                statusTotals.doneTotal = apiResponse.FaxStatusTotals._done
 
         resultsTotals = FaxResultsTotals()
         if hasattr(apiResponse, 'FaxResultsTotals'):
@@ -589,7 +589,7 @@ class FaxStatusTotals(object):
 
     def __str__(self):
         return ("pending=%s, processing=%s, queued=%s, starting=%s, sending=%s, finalizing=%s, done=%s"
-                %(self.pending, self.processing, self.queued, self.starting, self.sending, self.finalizing, self.done))
+                %(self.pendingTotal, self.processingTotal, self.queuedTotal, self.startingTotal, self.sendingTotal, self.finalizingTotal, self.doneTotal))
 
 class Response(object):
     '''
