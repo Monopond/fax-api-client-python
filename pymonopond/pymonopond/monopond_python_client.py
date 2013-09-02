@@ -120,8 +120,8 @@ class MappingUtils(object):
         if faxMessage.documents is not None:
             apiFaxMessage.Documents = self.mapDocumentListToApiFaxDocumentList(faxMessage.documents)
         apiFaxMessage.Resolution = faxMessage.resolution
-        if faxMessage.blocklist is not None:
-            apiFaxMessage.Blocklists = self.mapBlocklistsToApiFaxMessageBlocklist(faxMessage.blocklist)
+        #if faxMessage.blocklist is not None:
+            #apiFaxMessage.Blocklists = self.mapBlocklistsToApiFaxMessageBlocklist(faxMessage.blocklist)
         apiFaxMessage.ScheduledStartTime = faxMessage.scheduledStartTime
         apiFaxMessage.Retries = faxMessage.retries
         apiFaxMessage.BusyRetries = faxMessage.busyRetries
@@ -177,8 +177,8 @@ class ClientWrapper(object):
         apiFaxDocuments = self.mappingUtils.mapDocumentListToApiFaxDocumentList(request.documents)
         apiFaxMessages = self.mappingUtils.mapFaxMessageListToApiFaxMessageList(request.faxMessages)
         apiFaxMessageBlocklist = None
-        if request.blocklists is not None:
-            apiFaxMessageBlocklist = self.mappingUtils.mapBlocklistsToApiFaxMessageBlocklist(request.blocklists)
+        #if request.blocklists is not None:
+            #apiFaxMessageBlocklist = self.mappingUtils.mapBlocklistsToApiFaxMessageBlocklist(request.blocklists)
         result = self._client.service.SendFax(BroadcastRef=request.broadcastRef, SendRef=request.sendRef,
             FaxMessages= apiFaxMessages, Documents=apiFaxDocuments, Resolution=request.resolution,
             Blocklists = apiFaxMessageBlocklist, Retries=request.retries, HeaderFormat=request.headerFormat)
@@ -275,12 +275,13 @@ class SendFaxRequest(object):
     def addDocument(self, document=None):
         self._documents.append(document)
 
-    @property
-    def blocklists(self):
-        return self._blocklists
-    @blocklists.setter
-    def blocklists(self, blocklists=None):
-        self._blocklists = blocklists
+    #blocklist will not be used in soap v2.0
+    #@property
+    #def blocklists(self):
+        #return self._blocklists
+    #@blocklists.setter
+    #def blocklists(self, blocklists=None):
+        #self._blocklists = blocklists
 
     @property
     def sendFrom(self):

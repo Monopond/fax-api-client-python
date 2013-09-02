@@ -132,14 +132,14 @@ class TestClientFunctions(unittest.TestCase):
         self.assertEqual('sampleFile.txt', apiFaxDocumentList[1].FileName)
         self.assertEqual('VGhpcyBpcyBhIHRlc3QgdGV4dCBmaWxl', apiFaxDocumentList[1].FileData)
         self.assertEqual(0, apiFaxDocumentList[1].Order)
-        apiFaxMessageBlocklist = apiFaxMessageList[0].Blocklists
-        self.assertEqual('true', apiFaxMessageBlocklist._dncr)
-        self.assertEqual('false', apiFaxMessageBlocklist._fps)
-        self.assertEqual('false', apiFaxMessageBlocklist._smartblock)
-        apiFaxMessageBlocklist = apiFaxMessageList[1].Blocklists
-        self.assertEqual('true', apiFaxMessageBlocklist._dncr)
-        self.assertEqual('false', apiFaxMessageBlocklist._fps)
-        self.assertEqual('false', apiFaxMessageBlocklist._smartblock)
+        #apiFaxMessageBlocklist = apiFaxMessageList[0].Blocklists
+        #self.assertEqual('true', apiFaxMessageBlocklist._dncr)
+        #self.assertEqual('false', apiFaxMessageBlocklist._fps)
+        #self.assertEqual('false', apiFaxMessageBlocklist._smartblock)
+        #apiFaxMessageBlocklist = apiFaxMessageList[1].Blocklists
+        #self.assertEqual('true', apiFaxMessageBlocklist._dncr)
+        #self.assertEqual('false', apiFaxMessageBlocklist._fps)
+        #self.assertEqual('false', apiFaxMessageBlocklist._smartblock)
         self.assertEqual('fine', apiFaxMessageList[0].Resolution)
         self.assertEqual(None, apiFaxMessageList[0].ScheduledStartTime)
         self.assertEqual(3, apiFaxMessageList[0].Retries)
