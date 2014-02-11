@@ -4,6 +4,7 @@ from suds.bindings import binding
 from suds.sax.element import Element, Attribute
 import base64
 import os
+from pymonopond.monopond_python_client import *
 
 
 class MappingUtils(object):
@@ -160,15 +161,45 @@ class MappingUtils(object):
         apiFaxDocumentDocMergeFieldList = {'MergeField':apiFaxDocumentDocMergeFieldList}
         return apiFaxDocumentDocMergeFieldList
 
-    '''def mapStampMergeFieldListToApiFaxDocumentStampMergeFieldList(self, stampMergeFieldList):
+    def mapStampMergeFieldListToApiFaxDocumentStampMergeFieldList(self, stampMergeFieldList):
         apiFaxDocumentDocMergeFieldList = []
         for stampMergeField in stampMergeFieldList:
-            apiFaxDocumentDocMergeField = self._client.factory.create("apiFaxDocumentDocMergeField")
-            apiFaxDocumentDocMergeField.Key =  docMergeField.key
-            apiFaxDocumentDocMergeField.Value = docMergeField.value
-            apiFaxDocumentDocMergeFieldList.append(apiFaxDocumentDocMergeField)
+            apiFaxDocumentStampMergeField = self._client.factory.create("apiFaxDocumentStampMergeField")
+            apiFaxDocumentStampMergeFieldKey = self._client.factory.create("apiFaxDocumentStampMergeFieldKey")
+            apiFaxDocumentStampMergeFieldKey._xCoord = stampMergeField.keyXCoord
+            apiFaxDocumentStampMergeFieldKey._yCoord = stampMergeField.keyYCoord
+            apiFaxDocumentStampMergeField.Key = apiFaxDocumentStampMergeFieldKey
+            if isinstance(stampMergeField, TextStampMergeData) is True:
+                apiFaxDocumentStampMergeFieldTextValue = self._client.factory.create("apiFaxDocumentStampMergeFieldTextValue")
+                apiFaxDocumentStampMergeFieldTextValue.value = stampMergeField.textValue
+                apiFaxDocumentStampMergeFieldTextValue._fontName = stampMergeField.fontName
+                apiFaxDocumentStampMergeFieldTextValue._fontSize = stampMergeField.fontSize
+                apiFaxDocumentStampMergeField.TextValue = apiFaxDocumentStampMergeFieldTextValue
+            elif isinstance(stampMergeField, ImageStampMergeData) is True:
+                apiFaxDocumentStampMergeFieldImageValue = self._client.factory.create("apiFaxDocumentStampMergeFieldImageValue")
+                apiFaxDocumentStampMergeFieldImageValue.FileName = stampMergeField.fileName
+                apiFaxDocumentStampMergeFieldImageValue.FileData = stampMergeField.fileData
+                apiFaxDocumentStampMergeFieldImageValue._width = stampMergeField.width
+                apiFaxDocumentStampMergeFieldImageValue._height = stampMergeField.height
+                apiFaxDocumentStampMergeField.ImageValue = apiFaxDocumentStampMergeFieldImageValue
+            apiFaxDocumentDocMergeFieldList.append(apiFaxDocumentStampMergeField)
+
+        '''for imageStampMergeField in imageStampMergeFieldList:
+            apiFaxDocumentStampMergeField = self._client.factory.create("apiFaxDocumentStampMergeField")
+            apiFaxDocumentStampMergeFieldKey = self._client.factory.create("apiFaxDocumentStampMergeFieldKey")
+            apiFaxDocumentStampMergeFieldKey.xCoord = textStampMergeField.keyXCoord
+            apiFaxDocumentStampMergeFieldKey.yCoord = textStampMergeField.keyYCoord
+            apiFaxDocumentStampMergeField.Key = apiFaxDocumentStampMergeFieldKey
+            apiFaxDocumentStampMergeFieldImageValue = self._client.factory.create("apiFaxDocumentStampMergeFieldImageValue")
+            apiFaxDocumentStampMergeFieldImageValue.FileName = imageStampMergeField.fileName
+            apiFaxDocumentStampMergeFieldImageValue.FileData = imageStampMergeField.fileData
+            apiFaxDocumentStampMergeFieldImageValue.width = imageStampMergeField.width
+            apiFaxDocumentStampMergeFieldImageValue.height = imageStampMergeField.height
+            apiFaxDocumentStampMergeField.ImageValue = apiFaxDocumentStampMergeFieldImageValue
+            apiFaxDocumentDocMergeFieldList.append(apiFaxDocumentStampMergeField)'''
+
         apiFaxDocumentDocMergeFieldList = {'MergeField':apiFaxDocumentDocMergeFieldList}
-        return apiFaxDocumentDocMergeFieldList'''
+        return apiFaxDocumentDocMergeFieldList
 
 class ClientWrapper(object):
     """
@@ -246,18 +277,22 @@ class ClientWrapper(object):
         print result
         return wrappedResult
 
-    '''def faxDocumentPreview(self, request):
+    def faxDocumentPreview(self, request):
         if isinstance(request, FaxDocumentPreviewRequest) is False:
             raise TypeError, "%s incorrect request type" % (request.__class__)
         apiFaxDocumentDocMergeFieldList = self.mappingUtils.mapDocMergeFieldListToApiFaxDocumentDocMergeFieldList(request.docMergeData)
+        apiFaxDocumentStampMergeFieldList = self.mappingUtils.mapStampMergeFieldListToApiFaxDocumentStampMergeFieldList(request.stampMergeData)
         print apiFaxDocumentDocMergeFieldList
+        print "-------"
+        print apiFaxDocumentStampMergeFieldList
         result = self._client.service.FaxDocumentPreview(DocumentRef=request.documentRef, Resolution=request.resolution,
                                                          DitheringTechnique=request.ditheringTechnique, DocMergeData=apiFaxDocumentDocMergeFieldList,
-                                                         StampMergeData=request.stampMergeData)
-        wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
-        print result
+                                                         StampMergeData=apiFaxDocumentStampMergeFieldList)
+        print self._client.last_sent()
+        #wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
+        #print result
         #TODO add the mapping method here
-        return wrappedResult'''
+        #return wrappedResult
 
     def getTypeInstance(self, typeName):
         return self._client.factory.create(typeName)
@@ -558,17 +593,15 @@ class FaxDocumentPreviewRequest(object):
     @property
     def docMergeData(self):
         return self._docMergeData
-    @docMergeData.setter
-    def docMergeData(self, docMergeData=None):
-        self._docMergeData = docMergeData
+    def addDocMergeData(self, docMergeData=None):
+        self._docMergeData.append(docMergeData)
 
 
     @property
     def stampMergeData(self):
         return self._stampMergeData
-    @stampMergeData.setter
-    def stampMergeData(self, stampMergeData=None):
-        self._stampMergeData = stampMergeData
+    def addStampMergeData(self, stampMergeData=None):
+        self._stampMergeData.append(stampMergeData)
 
 
 
@@ -1057,7 +1090,7 @@ class DocMergeData(object):
 
     @property
     def value(self):
-        return self.value
+        return self._value
     @value.setter
     def value(self, value=None):
         self._value = value
@@ -1066,30 +1099,84 @@ class StampMergeData(object):
     def __init__(self):
         self._keyXCoord = None
         self._keyYCoord = None
-        self._textValue= None
-        self._imageValue= None
 
     @property
-    def key(self):
-        return self._key
-    @key.setter
-    def key(self, key=None):
-        self._key = key
+    def keyXCoord(self):
+        return self._keyXCoord
+    @keyXCoord.setter
+    def keyXCoord(self, keyXCoord=None):
+        self._keyXCoord = keyXCoord
+
+    @property
+    def keyYCoord(self):
+        return self._keyYCoord
+    @keyYCoord.setter
+    def keyYCoord(self, keyYCoord=None):
+        self._keyYCoord = keyYCoord
+
+class TextStampMergeData(StampMergeData):
+    def __init__(self):
+        StampMergeData.__init__(self)
+        self._textValue = None
+        self._fontName = None
+        self._fontSize = None
 
     @property
     def textValue(self):
-        return self.textValue
+        return self._textValue
     @textValue.setter
     def textValue(self, textValue=None):
         self._textValue = textValue
 
     @property
-    def imageValue(self):
-        return self.imageValue
-    @imageValue.setter
-    def imageValue(self, imageValue=None):
-        self._imageValue = imageValue
+    def fontName(self):
+        return self._fontName
+    @fontName.setter
+    def fontName(self, fontName=None):
+        self._fontName = fontName
 
+    @property
+    def fontSize(self):
+        return self._fontSize
+    @fontSize.setter
+    def fontSize(self, fontSize=None):
+        self._fontSize = fontSize
+
+class ImageStampMergeData(StampMergeData):
+    def __init__(self):
+        StampMergeData.__init__(self)
+        self._fileName = None
+        self._fileData = None
+        self._width = None
+        self._height = None
+
+    @property
+    def fileName(self):
+        return self._fileName
+    @fileName.setter
+    def fileName(self, fileName=None):
+        self._fileName = fileName
+
+    @property
+    def fileData(self):
+        return self._fileData
+    @fileData.setter
+    def fileData(self, fileData=None):
+        self._fileData = fileData
+
+    @property
+    def width(self):
+        return self._width
+    @width.setter
+    def width(self, width=None):
+        self._width = width
+
+    @property
+    def height(self):
+        return self._height
+    @height.setter
+    def height(self, height=None):
+        self._height = height
 
 class Blocklist(object):
 
