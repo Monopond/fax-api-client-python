@@ -155,6 +155,9 @@ class TestClientFunctions(unittest.TestCase):
         sendFaxRequest.headerFormat="test"
         sendFaxRequest.retries=0
         sendFaxRequest.headerFormat="1-1-1"
+        sendFaxRequest.mustBeSentBeforeDate="date"
+        sendFaxRequest.maxFaxPages="1"
+        sendFaxRequest.CLI="555"
         # sendFaxRequest.faxMessages = [self.initialize_message(), self.initialize_message()]
         sendFaxRequest.addFaxMessage(self.initialize_message())
         sendFaxRequest.addFaxMessage(self.initialize_message())
@@ -164,7 +167,7 @@ class TestClientFunctions(unittest.TestCase):
 
         verify(client._client.service).SendFax(BroadcastRef='123', SendRef='test-2-1',
             FaxMessages= any(), Documents=any(), Resolution='fine',
-            Blocklists = any(), Retries=0, HeaderFormat='1-1-1')
+            Blocklists = any(), Retries=0, HeaderFormat='1-1-1', MustBeSentBeforeDate='date', MaxFaxPages='1', CLI='555')
 
         #check handling for improper request
         with self.assertRaises(TypeError):

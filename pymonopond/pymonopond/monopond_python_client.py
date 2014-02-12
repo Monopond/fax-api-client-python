@@ -138,15 +138,19 @@ class MappingUtils(object):
         return apiFaxMessageList
 
     def mapDocumentToApiFaxDocument(self, document, apiFaxDocument):
+        apiFaxDocument.DocumentRef = document.documentRef
         apiFaxDocument.FileName = document.fileName
         apiFaxDocument.FileData = document.fileData
         apiFaxDocument.Order = document.order
+        apiFaxDocument.DitheringTechnique = document.faxDitheringTechnique
 
     def mapDocumentListToApiFaxDocumentList(self, documentList):
         apiFaxDocumentList = []
         for document in documentList:
             apiFaxDocument = self._client.factory.create("apiFaxDocument")
             self.mapDocumentToApiFaxDocument(document, apiFaxDocument)
+            apiFaxDocument.DocMergeData = self.mapDocMergeFieldListToApiFaxDocumentDocMergeFieldList(document.docMergeData)
+            apiFaxDocument.StampMergeData = self.mapStampMergeFieldListToApiFaxDocumentStampMergeFieldList(document.stampMergeData)
             apiFaxDocumentList.append(apiFaxDocument)
         apiFaxDocumentList = {'Document':apiFaxDocumentList}
         return apiFaxDocumentList
@@ -183,23 +187,15 @@ class MappingUtils(object):
                 apiFaxDocumentStampMergeFieldImageValue._height = stampMergeField.height
                 apiFaxDocumentStampMergeField.ImageValue = apiFaxDocumentStampMergeFieldImageValue
             apiFaxDocumentDocMergeFieldList.append(apiFaxDocumentStampMergeField)
-
-        '''for imageStampMergeField in imageStampMergeFieldList:
-            apiFaxDocumentStampMergeField = self._client.factory.create("apiFaxDocumentStampMergeField")
-            apiFaxDocumentStampMergeFieldKey = self._client.factory.create("apiFaxDocumentStampMergeFieldKey")
-            apiFaxDocumentStampMergeFieldKey.xCoord = textStampMergeField.keyXCoord
-            apiFaxDocumentStampMergeFieldKey.yCoord = textStampMergeField.keyYCoord
-            apiFaxDocumentStampMergeField.Key = apiFaxDocumentStampMergeFieldKey
-            apiFaxDocumentStampMergeFieldImageValue = self._client.factory.create("apiFaxDocumentStampMergeFieldImageValue")
-            apiFaxDocumentStampMergeFieldImageValue.FileName = imageStampMergeField.fileName
-            apiFaxDocumentStampMergeFieldImageValue.FileData = imageStampMergeField.fileData
-            apiFaxDocumentStampMergeFieldImageValue.width = imageStampMergeField.width
-            apiFaxDocumentStampMergeFieldImageValue.height = imageStampMergeField.height
-            apiFaxDocumentStampMergeField.ImageValue = apiFaxDocumentStampMergeFieldImageValue
-            apiFaxDocumentDocMergeFieldList.append(apiFaxDocumentStampMergeField)'''
-
         apiFaxDocumentDocMergeFieldList = {'MergeField':apiFaxDocumentDocMergeFieldList}
         return apiFaxDocumentDocMergeFieldList
+
+    def mapFaxDocumentPreviewResponseToPreviewResponse(self, faxDocumentPreviewResponse):
+        previewResponse = PreviewResponse()
+        previewResponse.filePreview = faxDocumentPreviewResponse.TiffPreview
+        previewResponse.pageCount = faxDocumentPreviewResponse.NumberOfPages
+
+        return previewResponse
 
 class ClientWrapper(object):
     """
@@ -232,7 +228,9 @@ class ClientWrapper(object):
         #apiFaxMessageBlocklist = self.mappingUtils.mapBlocklistsToApiFaxMessageBlocklist(request.blocklists)
         result = self._client.service.SendFax(BroadcastRef=request.broadcastRef, SendRef=request.sendRef,
                                               FaxMessages= apiFaxMessages, Documents=apiFaxDocuments, Resolution=request.resolution,
-                                              Blocklists = apiFaxMessageBlocklist, Retries=request.retries, HeaderFormat=request.headerFormat)
+                                              Blocklists = apiFaxMessageBlocklist, Retries=request.retries, HeaderFormat=request.headerFormat,
+                                              MustBeSentBeforeDate=request.mustBeSentBeforeDate, MaxFaxPages=request.maxFaxPages, CLI=request.CLI)
+        self.logSOAP()
         wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
         return wrappedResult
 
@@ -242,6 +240,7 @@ class ClientWrapper(object):
         result = self._client.service.FaxStatus(MessageRef=request.messageRef, SendRef=request.sendRef,
                                                 BroadcastRef=request.broadcastRef, Verbosity=request.verbosity)
         wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
+        self.logSOAP()
         return wrappedResult
 
     def pauseFax(self, request):
@@ -250,6 +249,7 @@ class ClientWrapper(object):
         result = self._client.service.PauseFax(MessageRef=request.messageRef, SendRef=request.sendRef,
                                                BroadcastRef=request.broadcastRef)
         wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
+        self.logSOAP()
         return wrappedResult
 
     def resumeFax(self, request):
@@ -258,6 +258,7 @@ class ClientWrapper(object):
         result = self._client.service.ResumeFax(MessageRef=request.messageRef, SendRef=request.sendRef,
                                                 BroadcastRef=request.broadcastRef)
         wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
+        self.logSOAP()
         return wrappedResult
 
     def stopFax(self, request):
@@ -266,6 +267,7 @@ class ClientWrapper(object):
         result = self._client.service.StopFax(MessageRef=request.messageRef, SendRef=request.sendRef,
                                               BroadcastRef=request.broadcastRef)
         wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
+        self.logSOAP()
         print result
         return wrappedResult
 
@@ -274,6 +276,7 @@ class ClientWrapper(object):
             raise TypeError, "%s incorrect request type" % (request.__class__)
         result = self._client.service.DeleteFaxDocument(DocumentRef=request.documentRef)
         wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
+        self.logSOAP()
         print result
         return wrappedResult
 
@@ -282,17 +285,17 @@ class ClientWrapper(object):
             raise TypeError, "%s incorrect request type" % (request.__class__)
         apiFaxDocumentDocMergeFieldList = self.mappingUtils.mapDocMergeFieldListToApiFaxDocumentDocMergeFieldList(request.docMergeData)
         apiFaxDocumentStampMergeFieldList = self.mappingUtils.mapStampMergeFieldListToApiFaxDocumentStampMergeFieldList(request.stampMergeData)
-        print apiFaxDocumentDocMergeFieldList
-        print "-------"
-        print apiFaxDocumentStampMergeFieldList
         result = self._client.service.FaxDocumentPreview(DocumentRef=request.documentRef, Resolution=request.resolution,
                                                          DitheringTechnique=request.ditheringTechnique, DocMergeData=apiFaxDocumentDocMergeFieldList,
                                                          StampMergeData=apiFaxDocumentStampMergeFieldList)
+        self.logSOAP()
+        wrappedResult = self.mappingUtils.mapFaxDocumentPreviewResponseToPreviewResponse(result)
+        print result
+        return wrappedResult
+
+    def logSOAP(self):
         print self._client.last_sent()
-        #wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
-        #print result
-        #TODO add the mapping method here
-        #return wrappedResult
+        print self._client.last_received()
 
     def getTypeInstance(self, typeName):
         return self._client.factory.create(typeName)
@@ -317,6 +320,9 @@ class SendFaxRequest(object):
         self._retries = None
         self._busyRetries = None
         self._headerFormat = None
+        self._mustBeSentBeforeDate = None
+        self._maxFaxPages = None
+        self._CLI = None
 
     @property
     def broadcastRef(self):
@@ -394,10 +400,32 @@ class SendFaxRequest(object):
     def headerFormat(self, headerFormat=None):
         self._headerFormat = headerFormat
 
-    def __str__(self):
+    @property
+    def mustBeSentBeforeDate(self):
+        return self._mustBeSentBeforeDate
+    @mustBeSentBeforeDate.setter
+    def mustBeSentBeforeDate(self, mustBeSentBeforeDate=None):
+        self._mustBeSentBeforeDate = mustBeSentBeforeDate
+
+    @property
+    def maxFaxPages(self):
+        return self._maxFaxPages
+    @maxFaxPages.setter
+    def maxFaxPages(self, maxFaxPages=None):
+        self._maxFaxPages = maxFaxPages
+
+    @property
+    def CLI(self):
+        return self._CLI
+    @CLI.setter
+    def CLI(self, CLI=None):
+        self._CLI = CLI
+
+
+    '''def __str__(self):
         return ("broadcastRef=%s, sendRef=%s, resolution=%s,  sendFrom=%s, scheduledStartTime=%s, retries=%s, busyRetries=%s, headerFormat=%s, faxMessages=%s, documents=%s"
                 %(self.broadcastRef, self.sendRef, self.resolution, self.sendFrom, self.scheduledStartTime, self.retries, self.busyRetries, self.headerFormat, self.faxMessages, self.documents))
-
+'''
 class FaxStatusRequest(object):
     '''
         fax status request client object
@@ -772,6 +800,29 @@ class Response(object):
         return ("faxResultTotals=[%s],\n faxStatusTotals=[%s],\n faxMessageStatusResultsList=[%s]"
                 %(self.faxResultTotals, self.faxStatusTotals, self.faxMessageStatusResultsList))
 
+class PreviewResponse(object):
+    def __init__(self):
+        self._filePreview = None
+        self._pageCount = None
+
+    @property
+    def filePreview(self):
+        return self._filePreview
+    @filePreview.setter
+    def filePreview(self, filePreview):
+        self._filePreview = filePreview
+
+    @property
+    def pageCount(self):
+        return self._pageCount
+    @pageCount.setter
+    def pageCount(self, pageCount):
+        self._pageCount = pageCount
+
+    def __str__(self):
+        return ("tiffPreview=[%s],\n pageCount=[%s],"
+                %(self.filePreview, self.pageCount))
+
 class FaxMessage(object):
     '''
         fax message client object
@@ -1045,6 +1096,10 @@ class FaxDocument(object):
         self._fileName = None
         self._filePath = None
         self._order = None
+        self._faxDitheringTechnique = None
+        self._documentRef = None
+        self._docMergeData = []
+        self._stampMergeData = []
 
     @property
     def filePath(self):
@@ -1071,6 +1126,33 @@ class FaxDocument(object):
     @order.setter
     def order(self, order):
         self._order = order
+
+    @property
+    def faxDitheringTechnique(self):
+        return self._faxDitheringTechnique
+    @faxDitheringTechnique.setter
+    def faxDitheringTechnique(self, faxDitheringTechnique=None):
+        self._faxDitheringTechnique = faxDitheringTechnique
+
+    @property
+    def documentRef(self):
+        return self._documentRef
+    @documentRef.setter
+    def documentRef(self, documentRef=None):
+        self._documentRef = documentRef
+
+    @property
+    def docMergeData(self):
+        return self._docMergeData
+    def addDocMergeData(self, docMergeData=None):
+        self._docMergeData.append(docMergeData)
+
+
+    @property
+    def stampMergeData(self):
+        return self._stampMergeData
+    def addStampMergeData(self, stampMergeData=None):
+        self._stampMergeData.append(stampMergeData)
 
     def fileParser(self, fileName):
         parsedFilePath = os.path.split(fileName)
