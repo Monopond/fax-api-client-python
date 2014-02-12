@@ -1094,14 +1094,14 @@ class FaxDocument(object):
     def __init__(self):
         self._fileData = None
         self._fileName = None
-        self._filePath = None
+        #self._filePath = None
         self._order = None
         self._faxDitheringTechnique = None
         self._documentRef = None
         self._docMergeData = []
         self._stampMergeData = []
 
-    @property
+    '''@property
     def filePath(self):
         return self._filePath
     @filePath.setter
@@ -1110,15 +1110,21 @@ class FaxDocument(object):
         file = open(filePath, "rb")
         binary_data = file.read()
         file.close()
-        self._fileData = base64.b64encode(binary_data)
+        self._fileData = base64.b64encode(binary_data)'''
 
     @property
     def fileName(self):
         return self._fileName
+    @fileName.setter
+    def fileName(self, fileName):
+        self._fileName = fileName
 
     @property
     def fileData(self):
         return self._fileData
+    @fileData.setter
+    def fileData(self, fileData):
+        self._fileData = fileData
 
     @property
     def order(self):
@@ -1154,9 +1160,9 @@ class FaxDocument(object):
     def addStampMergeData(self, stampMergeData=None):
         self._stampMergeData.append(stampMergeData)
 
-    def fileParser(self, fileName):
+    '''def fileParser(self, fileName):
         parsedFilePath = os.path.split(fileName)
-        return parsedFilePath[1]
+        return parsedFilePath[1]'''
 
 class DocMergeData(object):
     def __init__(self):
