@@ -56,7 +56,7 @@ To send a fax to a single destination, a request similar to the following exampl
 # Setup Document
 document = Document()
 document.fileName = 'test'
-document.fileData = 'thequickbrownfoxjumpsoverthelazydog'
+document.fileData = 'base64 string of file' #convert your file to base64 string and place it here
 document.order = 0
 
 # Setup FaxMessage
@@ -95,7 +95,7 @@ To send faxes to multiple destinations, a request similar to the following examp
 document1 = Document()
 document1.documentRef = 'testDocument'
 document1.fileName = 'test 1'
-document1.fileData = 'thequickbrownfoxjumpsoverthelazydog'
+document1.fileData = 'base64 string of file' #convert your file to base64 string and place it here
 document1.order = 0
 
 # This will save 'test 1' file without any document ref
@@ -157,7 +157,7 @@ This method is recommended for broadcasting as it takes advantage of the multipl
 #Setup Document
 document = Document();
 document.fileName = "AnyFileName1.txt";
-document.fileData = $filedata;
+document.fileData = 'base64 string of file'; #convert your file to base64 string and place it here
 document.order = 0;
 
 #Setup FaxMessage
@@ -542,9 +542,320 @@ There are multiple levels of verbosity available in the request; these are expla
 | **results** |Includes the results from ***“send”*** along with the sending results of the fax messages. |
 | **all** | all Includes the results from both ***“details”*** and ***“results”*** along with some extra uncommon fields. |
 
-###Sending a faxStatus Request with “brief” verbosity:
+####Sending a faxStatus Request with “brief” verbosity:
+
+```python
+# Setup FaxStatusRequest
+faxStatusRequest = FaxStatusRequest()
+faxStatusRequest.messageRef = 'test-2-1-1'
+
+# Call Fax Status method
+faxStatusResponse = client.faxStatus(faxStatusRequest)
+print faxStatusResponse
+
+```
+####Status Request with “send” verbosity:
+
+```python
+# Setup FaxStatusRequest
+faxStatusRequest = FaxStatusRequest()
+faxStatusRequest.messageRef = 'test-2-1-1'
+faxStatusRequest.verbosity = 'send'
+
+# Call Fax Status method
+faxStatusResponse = client.faxStatus(faxStatusRequest)
+print faxStatusResponse
+
+```
+####Status Request with “details” verbosity:
+
+```python
+# Setup FaxStatusRequest
+faxStatusRequest = FaxStatusRequest()
+faxStatusRequest.messageRef = 'test-2-1-1'
+faxStatusRequest.verbosity = 'details'
+
+# Call Fax Status method
+faxStatusResponse = client.faxStatus(faxStatusRequest)
+print faxStatusResponse
+
+```
+####Status Request with “results” verbosity:
+
+```python
+# Setup FaxStatusRequest
+faxStatusRequest = FaxStatusRequest()
+faxStatusRequest.messageRef = 'test-2-1-1'
+faxStatusRequest.verbosity = 'results'
+
+# Call Fax Status method
+faxStatusResponse = client.faxStatus(faxStatusRequest)
+print faxStatusResponse
+```
+###Response
+The response received depends entirely on the verbosity level specified.
+
+**FaxStatusResponse:**
+
+| Name | Type | Verbosity | Description |
+| --- | --- | --- | --- |
+| **FaxStatusTotals** | *FaxStatusTotals* | *brief* | Counts of how many faxes are at each status. See below for more details. |
+| **FaxResultsTotals** | *FaxResultsTotals* | *brief* | FaxResultsTotals FaxResultsTotals brief Totals of the end results of the faxes. See below for more details. |
+| **FaxMessages** | *Array of FaxMessage* | *send* | send List of each fax in the query. See below for more details. |
+
+**FaxStatusTotals:**
+
+Contains the total count of how many faxes are at each status. 
+To see more information on each fax status, view the FaxStatus table below.
+
+| Name | Type | Verbosity | Description |
+| --- | --- | --- | --- |
+| **pending** | *Long* | *brief* | Fax is pending on the system and waiting to be processed.|
+| **processing** | *Long* | *brief* | Fax is in the initial processing stages. |
+| **queued** | *Long* | *brief* | Fax has finished processing and is queued, ready to send out at the send time. |
+| **starting** | *Long* | *brief* | Fax is ready to be sent out. |
+| **sending** | *Long* | *brief* | Fax has been spooled to our servers and is in the process of being sent out. |
+| **finalizing** | *Long* | *brief* | Fax has finished sending and the results are being processed.|
+| **done** | *Long* | *brief* | Fax has completed and no further actions will take place. The detailed results are available at this status. |
+
+**FaxResultsTotals:**
+
+Contains the total count of how many faxes ended in each result, as well as some additional totals. To view more information on each fax result, view the FaxResults table below.
+
+| Name | Type | Verbosity | Description |
+| --- | --- | --- | --- |
+| **success** | *Long* | *brief* | Fax has successfully been delivered to its destination.|
+| **blocked** | *Long* |  *brief* | Destination number was found in one of the block lists. |
+| **failed** | *Long* | *brief* | Fax failed getting to its destination.|
+| **totalAttempts** | *Long* | *brief* |Total attempts made in the reference context.|
+| **totalFaxDuration** | *Long* | *brief* |totalFaxDuration Long brief Total time spent on the line in the reference context.|
+| **totalPages** | *Long* | *brief* | Total pages sent in the reference context.|
+
+
+**apiFaxMessageStatus:**
+
+| Name | Type | Verbosity | Description |
+| --- | --- | --- | --- |
+| **messageRef** | *String* | *send* | |
+| **sendRef** | *String* | *send* | |
+| **broadcastRef** | *String* | *send* | |
+| **sendTo** | *String* | *send* | |
+| **status** |  | *send* | The current status of the fax message. See the FaxStatus table above for possible status values. |
+| **FaxDetails** | *FaxDetails* | *details* | Contains the details and settings the fax was sent with. See below for more details. |
+| **FaxResults** | *Array of FaxResult* | *results* | Contains the results of each attempt at sending the fax message and their connection details. See below for more details. |
+
+**FaxDetails:**
+
+| Name | Type | Verbosity |
+| --- | --- | --- | --- |
+| **sendFrom** | *Alphanumeric String* | *details* |
+| **resolution** | *String* | *details* |
+| **retries** | *Integer* | *details* |
+| **busyRetries** | *Integer* | *details* |
+| **headerFormat** | *String* | *details* |
+
+**FaxResults:**
+
+| Name | Type | Verbosity | Description |
+| --- | --- | --- | --- |
+| **attempt** | *Integer* | *results* | The attempt number of the FaxResult. |
+| **result** | *String* | *results* | The result of the fax message. See the FaxResults table above for all possible results values. |
+| **Error** | *FaxError* | *results* |  The fax error code if the fax was not successful. See below for all possible values. |
+| **cost** | *BigDecimal* | *results* | The final cost of the fax message. | 
+| **pages** | *Integer* | *results* | Total pages sent to the end fax machine. |
+| **scheduledStartTime** | *DateTime* | *results* | The date and time the fax is scheduled to start. |
+| **dateCallStarted** | *DateTime* | *results* | Date and time the fax started transmitting. |
+| **dateCallEnded** | *DateTime* | *results* | Date and time the fax finished transmitting. |
+
+**FaxError:**
+
+| Value | Error Name |
+| --- | --- |
+| **DOCUMENT_EXCEEDS_PAGE_LIMIT** | Document exceeds page limit |
+| **DOCUMENT_UNSUPPORTED** | Unsupported document type |
+| **DOCUMENT_FAILED_CONVERSION** | Document failed conversion |
+| **FUNDS_INSUFFICIENT** | Insufficient funds |
+| **FUNDS_FAILED** | Failed to transfer funds |
+| **BLOCK_ACCOUNT** | Number cannot be sent from this account |
+| **BLOCK_GLOBAL** | Number found in the Global blocklist |
+| **BLOCK_SMART** | Number found in the Smart blocklist |
+| **BLOCK_DNCR** | Number found in the DNCR blocklist |
+| **BLOCK_CUSTOM** | Number found in a user specified blocklist |
+| **FAX_NEGOTIATION_FAILED** | Negotiation failed |
+| **FAX_EARLY_HANGUP** | Early hang-up on call |
+| **FAX_INCOMPATIBLE_MACHINE** | Incompatible fax machine |
+| **FAX_BUSY** | Phone number busy |
+| **FAX_NUMBER_UNOBTAINABLE** | Number unobtainable |
+| **FAX_SENDING_FAILED** | Sending fax failed |
+| **FAX_CANCELLED** | Cancelled |
+| **FAX_NO_ANSWER** | No answer |
+| **FAX_UNKNOWN** | Unknown fax error |
+
+###SOAP Faults
+
+This function will throw one of the following SOAP faults/exceptions if something went wrong:
+
+**InvalidArgumentsException**, **NoMessagesFoundException**, or **InternalServerException**.
+You can find more details on these faults [here](#section5).
+
+##StopFax
+
+###Description
+Stops a fax message from sending. This fax message must either be paused, queued, starting or sending. Please note the fax cannot be stopped if the fax is currently in the process of being transmitted to the destination device.
+
+When making a stop request you must provide at least a `BroadcastRef`, `SendRef` or `MessageRef`. The function will also accept a combination of these to further narrow down the request.
+
+###Request
+####StopFaxRequest Properties:
+
+| Name | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| **BroadcastRef** | | *String* | User-defined broadcast reference. |
+| **SendRef** |  | *String* | User-defined send reference. |
+| **MessageRef** |  | *String* | User-defined message reference. |
+
+####StopFax Request limiting by BroadcastRef:
+
+```python
+# Setup StopFaxRequest
+stopFaxRequest = StopFaxRequest()
+stopFaxRequest.broadcastRef = 'Broadcast-test-1’
+
+# Call Stop Fax Method
+stopFaxResponse = client.stopFax(stopFaxRequest)
+print stopFaxResponse
+```
+####StopFax Request limiting by SendRef:
+
+```python
+# Setup StopFaxRequest
+stopFaxRequest = StopFaxRequest()
+stopFaxRequest.broadcastRef = 'Send-Ref-1’
+
+# Call Stop Fax Method
+stopFaxResponse = client.stopFax(stopFaxRequest)
+print stopFaxResponse
+
 ```
 
+####StopFax Request limiting by MessageRef:
 
+```python
+# Setup StopFaxRequest
+stopFaxRequest = StopFaxRequest()
+stopFaxRequest.messageRef = 'Testing-message-1’
+
+# Call Stop Fax Method
+stopFaxResponse = client.stopFax(stopFaxRequest)
+print stopFaxResponse
+
+```
+###Response
+The response received from a `StopFaxRequest` is the same response you would receive when calling the `FaxStatus` method call with the `send` verbosity level.
+
+###SOAP Faults
+This function will throw one of the following SOAP faults/exceptions if something went wrong:
+
+**InvalidArgumentsException**, **NoMessagesFoundException**, or **InternalServerException**.
+You can find more details on these faults [here](#section5).
+##PauseFax
+
+###Description
+Pauses a fax message before it starts transmitting. This fax message must either be queued, starting or sending. Please note the fax cannot be paused if the message is currently being transmitted to the destination device.
+
+When making a pause request, you must provide at least a `BroadcastRef`, `SendRef` or `MessageRef`. The function will also accept a combination of these to further narrow down the request. 
+
+###Request
+####PauseFaxRequest Properties:
+| Name | Required | Type | Description |
+| --- | --- | --- | --- |
+| **BroadcastRef** | | *String* | User-defined broadcast reference. |
+| **SendRef** | | *String* | User-defined send reference. |
+| **MessageRef** | | *String* | User-defined message reference. |
+
+
+###PauseFax Request limiting by BroadcastRef:
+```python
+# Setup PauseFaxRequest
+pauseFaxRequest = PauseFaxRequest()
+pauseFaxRequest.broadcastRef = 'Broadcast-test-1'
+
+# Call Pause Fax method
+pauseFaxResponse = client.pauseFax(pauseFaxRequest)
+print pauseFaxResponse
+
+```
+###PauseFax Request limiting by SendRef:
+```python
+# Setup PauseFaxRequest
+pauseFaxRequest = PauseFaxRequest()
+pauseFaxRequest.sendRef = 'Send-Ref-1'
+
+# Call Pause Fax method
+pauseFaxResponse = client.pauseFax(pauseFaxRequest)
+print pauseFaxResponse
+
+```
+###PauseFax Request limiting by MessageRef:
+```python
+# Setup PauseFaxRequest
+pauseFaxRequest = PauseFaxRequest()
+pauseFaxRequest.messageRef = 'Testing-message-1'
+
+# Call Pause Fax method
+pauseFaxResponse = client.pauseFax(pauseFaxRequest)
+print pauseFaxResponse
+```
+###Response
+The response received from a `PauseFaxRequest` is the same response you would receive when calling the `FaxStatus` method call with the `send` verbosity level. 
+
+###SOAP Faults
+This function will throw one of the following SOAP faults/exceptions if something went wrong:
+**InvalidArgumentsException**, **NoMessagesFoundException**, or **InternalServerException**.
+You can find more details on these faults in [here](#section5).
+
+##ResumeFax
+
+When making a resume request, you must provide at least a `BroadcastRef`, `SendRef` or `MessageRef`. The function will also accept a combination of these to further narrow down the request. 
+
+###Request
+####ResumeFaxRequest Properties:
+| Name | Required | Type | Description |
+| --- | --- | --- | --- |
+| **BroadcastRef** | | *String* | User-defined broadcast reference. |
+| **SendRef** | | *String* | User-defined send reference. |
+| **MessageRef** | | *String* | User-defined message reference. |
+
+###ResumeFax Request limiting by BroadcastRef:
+
+```python
+# Setup Resume Fax request
+resumeFaxRequest = ResumeFaxRequest()
+resumeFaxRequest.broadcastRef= 'Broadcast-test-1’
+
+# Call Resume Fax method
+resumeFaxResponse = client.resumeFax(resumeFaxRequest)
+print resumeFaxResponse
+```
+###ResumeFax Request limiting by SendRef:
+```python
+# Setup Resume Fax request
+resumeFaxRequest = ResumeFaxRequest()
+resumeFaxRequest.sendRef= 'Send-ref-1’
+
+# Call Resume Fax method
+resumeFaxResponse = client.resumeFax(resumeFaxRequest)
+print resumeFaxResponse
+```
+###ResumeFax Request limiting by MessageRef:
+```python
+# Setup Resume Fax request
+resumeFaxRequest = ResumeFaxRequest()
+resumeFaxRequest.messageRef= 'Testing-message-1’
+
+# Call Resume Fax method
+resumeFaxResponse = client.resumeFax(resumeFaxRequest)
+print resumeFaxResponse
+```
 
 
