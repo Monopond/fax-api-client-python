@@ -271,6 +271,15 @@ class ClientWrapper(object):
         print result
         return wrappedResult
 
+    def saveFaxDocument(self, request):
+        if isinstance(request, SaveFaxDocumentRequest) is False:
+            raise TypeError, "%s incorrect request type" % (request.__class__)
+        result = self._client.service.SaveFaxDocument(DocumentRef=request.documentRef, FileName=request.fileName, FileData=request.fileData)
+        wrappedResult = self.mappingUtils.mapApiResponseToResponse(result)
+        self.logSOAP()
+        print result
+        return wrappedResult
+
     def deleteFaxDocument(self, request):
         if isinstance(request, DeleteFaxDocumentRequest) is False:
             raise TypeError, "%s incorrect request type" % (request.__class__)
@@ -567,6 +576,40 @@ class StopFaxRequest(object):
 
     def __str__(self):
         return ("messageRef=%s, sendRef=%s, broadcastRef=%s" %(self.messageRef, self.sendRef, self.broadcastRef))
+
+class SaveFaxDocumentRequest(object):
+    '''
+        save fax request client object
+    '''
+    def __init__(self):
+        self._documentRef = None
+        self._fileName = None
+        self._fileData = None
+
+    @property
+    def documentRef(self):
+        return self._documentRef
+    @documentRef.setter
+    def documentRef(self, documentRef=None):
+        self._documentRef = documentRef
+
+    @property
+    def fileName(self):
+        return self._fileName
+    @fileName.setter
+    def fileName(self, fileName=None):
+        self._fileName = fileName
+
+    @property
+    def fileData(self):
+        return self._fileData
+    @fileData.setter
+    def fileData(self, fileData=None):
+        self._fileData = fileData
+
+    def __str__(self):
+        return ("documentRef=%s" %(self._documentRef))
+
 
 class DeleteFaxDocumentRequest(object):
     '''
