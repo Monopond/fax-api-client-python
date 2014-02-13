@@ -945,6 +945,7 @@ This function provides you with a method to generate a preview of a saved docume
 
 | **Name** | **Required** | **Type** | **Description** | **Default** |
 |--- | --- | --- | --- | ---|
+|**DocumentRef**| **X** | *String* | Unique identifier for the document to be deleted. |
 |**Resolution**|  | *Resolution* |Resolution setting of the fax document. Refer to the resolution table below for possible resolution values.| normal |
 |**DitheringTechnique**| | *FaxDitheringTechnique* | Applies a custom dithering method to the fax document before transmission. | |
 |**DocMergeData** | | *Array of DocMergeData MergeFields* | Each mergefield has a key and a value. The system will look for the keys in a document and replace them with their corresponding value. ||
@@ -1016,11 +1017,14 @@ faxDocumentPreviewRequest = FaxDocumentPreviewRequest()
 
 # Document Ref of the document you want to see.
 faxDocumentPreviewRequest.documentRef='txtRef'
+faxDocumentPreviewRequest.ditheringTechnique='fine'
+faxDocumentPreviewRequest.resolution='normal'
 
 #Call the faxDocument preview method
 faxDocumentPreviewResponse = client.faxDocumentPreview(faxDocumentPreviewRequest)
 
 ```
+Note that Document ref should be previously saved. Either by SaveFaxDocumentRequest or by adding a document ref in SendFax.
 
 ####Sending FaxDocumentPreview with doc merge fields
 
