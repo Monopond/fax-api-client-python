@@ -33,6 +33,7 @@ Monopond Fax API Python Client
 * ClientWrapper - the client object that hold the methods to send requests.
 Request methods:(sendFax, faxStatus, pauseFax, resumeFax, stopFax, deleteFaxDocument, faxDocumentPreview)
 
+
 ###Building A Request
 
 To use Monopond SOAP Python Client, start by including the monopond_python_client.py then creating an instance of the client by supplying your credentials (line 5). Your username and password should be enclosed in quotation marks.
@@ -45,8 +46,170 @@ client = ClientWrapper('http://192.168.1.35:8000/fax/soap/v2?wsdl','username','p
 
 # Setup your request here
 ```
+
+###Encoding base64 string from file
+
+```python
+filePath="/home/user/file"
+file = open(filePath, "rb")
+binary_data = file.read()
+file.close()
+fileData = base64.b64encode(binary_data)
+
+print fileData # this prints the base64 string
+
+```
+
 ###SendFax
 SendFax Request allows you to send fax/es on the platform.
+
+####SendFaxRequest Properties:
+**Name**|**Required**|**Type**|**Description**|**Default**
+-----|-----|-----|-----|-----
+**BroadcastRef**||String|Allows the user to tag all faxes in this request with a user-defined broadcastreference. These faxes can then be retrieved at a later point based on this reference.|
+**SendRef**||String|Similar to the BroadcastRef, this allows the user to tag all faxes in this request with a send reference. The SendRef is used to represent all faxes in this request only, so naturally it must be unique.|
+**FaxMessages**|**X**| Array of FaxMessage |FaxMessages describe each individual fax message and its destination. See below for details.|
+**SendFrom**||Alphanumeric String|A customisable string used to identify the sender of the fax. Also known as the Transmitting Subscriber Identification (TSID). The maximum string length is 32 characters|Fax
+**Documents**|**X**|Array of FaxDocument|Each FaxDocument object describes a fax document to be sent. Multiple documents can be defined here which will be concatenated and sent in the same message. See below for details.|
+**Resolution**||Resolution|Resolution setting of the fax document. Refer to the resolution table below for possible resolution values.|normal
+**ScheduledStartTime**||DateTime|The date and time the transmission of the fax will start.|Current time (immediate sending)
+**Blocklists**||Blocklists|The blocklists that will be checked and filtered against before sending the message. See below for details.WARNING: This feature is inactive and non-functional in this (2.1) version of the Fax API.|
+**Retries**||Unsigned Integer|The number of times to retry sending the fax if it fails. Each account has a maximum number of retries that can be changed by consultation with your account manager.|Account Default
+**BusyRetries**||Unsigned Integer|Certain fax errors such as “NO_ANSWER” or “BUSY” are not included in the above retries limit and can be set separately. Each account has a maximum number of busy retries that can be changed by consultation with your account manager.|Account default
+**HeaderFormat**||String|Allows the header format that appears at the top of the transmitted fax to be changed. See below for an explanation of how to format this field.| From: X, To: X
+**MustBeSentBeforeDate** | | DateTime |  Specifies a time the fax must be delivered by. Once the specified time is reached the fax will be cancelled across the system. | 
+**MaxFaxPages** | | Unsigned Integer |  Sets a limit on the amount of pages allowed in a single fax transmission. Especially useful if the user is blindly submitting their customer's documents to the platform. | 20
+
+***FaxMessage Parameters:***
+This represents a single fax message being sent to a destination.
+
+**Name** | **Required** | **Type** | **Description** | **Default** 
+-----|-----|-----|-----|-----
+**MessageRef** | **X** | String | A unique user-provided identifier that is used to identify the fax message. This can be used at a later point to retrieve the results of the fax message. |
+**SendTo** | **X** | String | The phone number the fax message will be sent to. |
+**SendFrom** | | Alphanumeric String | A customisable string used to identify the sender of the fax. Also known as the Transmitting Subscriber Identification (TSID). The maximum string length is 32 characters | Empty
+**Documents** | **X** | Array of FaxDocument | Each FaxDocument object describes a fax document to be sent. Multiple documents can be defined here which will be concatenated and sent in the same message. See below for details. | 
+**Resolution** | | Resolution|Resolution setting of the fax document. Refer to the resolution table below for possible resolution values.| normal
+**ScheduledStartTime** | | DateTime | The date and time the transmission of the fax will start. | Start now
+**Blocklists** | | Blocklists | The blocklists that will be checked and filtered against before sending the message. See below for details. WARNING: This feature is inactive and non-functional in this (2.1) version of the Fax API. |
+**Retries** | | Unsigned Integer | The number of times to retry sending the fax if it fails. Each account has a maximum number of retries that can be changed by consultation with your account manager. | Account Default
+**BusyRetries** | | Unsigned Integer | Certain fax errors such as “NO_ANSWER” or “BUSY” are not included in the above retries limit and can be set separately. Please consult with your account manager in regards to maximum value.|account default
+**HeaderFormat** | | String | Allows the header format that appears at the top of the transmitted fax to be changed. See below for an explanation of how to format this field. | From： X, To: X
+**MustBeSentBeforeDate** | | DateTime |  Specifies a time the fax must be delivered by. Once the specified time is reached the fax will be cancelled across the system. | 
+**MaxFaxPages** | | Unsigned Integer |  Sets a limit on the amount of pages allowed in a single fax transmission. Especially useful if the user is blindly submitting their customer's documents to the platform. | 20
+**CLI**| | String| Allows a customer called ID. Note: Must be enabled on the account before it can be used.
+
+***FaxDocument Parameters:***
+Represents a fax document to be sent through the system. Supported file types are: PDF, TIFF, PNG, JPG, GIF, TXT, PS, RTF, DOC, DOCX, XLS, XLSX, PPT, PPTX.
+
+**Name**|**Required**|**Type**|**Description**|**Default**
+-----|-----|-----|-----|-----
+**FileName**|**X**|String|The document filename including extension. This is important as it is used to help identify the document MIME type.|
+**FileData**|**X**|Base64|The document encoded in Base64 format.|
+**Order** | | Integer|If multiple documents are defined on a message this value will determine the order in which they will be transmitted.|0
+**DitheringTechnique** | | FaxDitheringTechnique | Applies a custom dithering method to their fax document before transmission. | 
+**DocMergeData**|||An Array of MergeFields|
+**StampMergeData**|||An Array of MergeFields|
+
+**FaxDitheringTechnique:**
+
+| Value | Fax Dithering Technique |
+| --- | --- |
+| **none** | No dithering. |
+| **normal** | Normal dithering.|
+| **turbo** | Turbo dithering.|
+| **darken** | Darken dithering.|
+| **darken_more** | Darken more dithering.|
+| **darken_extra** | Darken extra dithering.|
+| **ligthen** | Lighten dithering.|
+| **lighten_more** | Lighten more dithering. |
+| **crosshatch** | Crosshatch dithering. |
+| **DETAILED** | Detailed dithering. |
+
+**Resolution Levels:**
+
+| **Value** | **Description** |
+| --- | --- |
+| **normal** | Normal standard resolution (98 scan lines per inch) |
+| **fine** | Fine resolution (196 scan lines per inch) |
+
+***Header Format:iff***
+Determines the format of the header line that is printed on the top of the transmitted fax message.
+This is set to **rom %from%, To %to%|%a %b %d %H:%M %Y”**y default which produces the following:
+
+From TSID, To 61022221234 Mon Aug 28 15:32 2012 1 of 1
+
+**Value** | **Description**
+--- | ---
+**%from%**|The value of the **SendFrom** field in the message.
+**%to%**|The value of the **SendTo** field in the message.
+**%a**|Weekday name (abbreviated)
+**%A**|Weekday name
+**%b**|Month name (abbreviated)
+**%B**|Month name
+**%d**|Day of the month as a decimal (01 – 31)
+**%m**|Month as a decimal (01 – 12)
+**%y**|Year as a decimal (abbreviated)
+**%Y**|Year as a decimal
+**%H**|Hour as a decimal using a 24-hour clock (00 – 23)
+**%I**|Hour as a decimal using a 12-hour clock (01 – 12)
+**%M**|Minute as a decimal (00 – 59)
+**%S**|Second as a decimal (00 – 59)
+**%p**|AM or PM
+**%j**|Day of the year as a decimal (001 – 366)
+**%U**|Week of the year as a decimal (Monday as first day of the week) (00 – 53)
+**%W**|Day of the year as a decimal (001 – 366)
+**%w**|Day of the week as a decimal (0 – 6) (Sunday being 0)
+**%%**|A literal % character
+
+TODO: The default value is set to: “From %from%, To %to%|%a %b %d %H:%M %Y”
+
+<a name="docMergeDataParameters"></a> 
+
+**DocMergeData Mergefield Properties:**
+
+|**Name** | **Required** | **Type** | **Description** |
+|-----|-----|-----|-----|
+|**Key** | | *String* | A unique identifier used to determine which fields need replacing. |
+|**Value** | | *String* | The value that replaces the key. |
+
+<a name="stampMergeDataParameters"></a> 
+**StampMergeData Mergefield Properties:**
+
+|**Name** | **Required** | **Type** | **Description** |
+|-----|-----|-----|-----|
+|**Key** |  | *StampMergeFieldKey* | Contains x and y coordinates where the ImageValue or TextValue should be placed. |
+|**TextValue** |  | *StampMergeFieldTextValue* | The text value that replaces the key. |
+|**ImageValue** |  | *StampMergeFieldImageValue* | The image value that replaces the key. |
+
+ **StampMergeFieldKey Properties:**
+
+| **Name** | **Required** | **Type** | **Description** |
+|----|-----|-----|-----|
+| **xCoord** |  | *Int* | X coordinate. |
+| **yCoord** |  | *Int* | Y coordinate. |
+
+**StampMergeFieldTextValue Properties:**
+
+|**Name** | **Required** | **Type** | **Description** |
+|-----|-----|-----|-----|
+|**fontName** |  | *String* | Font name to be used. |
+|**fontSize** |  | *Decimal* | Font size to be used. |
+
+**StampMergeFieldImageValue Properties:**
+
+|**Name** | **Required** | **Type** | **Description** |
+|-----|-----|-----|-----|
+|**fileName** |  | *String* | The document filename including extension. This is important as it is used to help identify the document MIME type. |
+|**fileData** |  | *Base64* | The document encoded in Base64 format. |
+
+###Response
+The response received from a `SendFaxRequest` matches the response you receive when calling the `FaxStatus` method call with a `send` verbosity level.
+
+###SOAP Faults
+This function will throw one of the following SOAP faults/exceptions if something went wrong:
+**InvalidArgumentsException, NoMessagesFoundException, DocumentContentTypeNotFoundException, or InternalServerException.**
+You can find more details on these faults [here](#section5).
 
 ####Sending a single fax:
 
@@ -362,153 +525,6 @@ print clientResponse
 
 
 ```
-###SendFaxRequest Parameters:
-**Name**|**Required**|**Type**|**Description**|**Default**
------|-----|-----|-----|-----
-**BroadcastRef**||String|Allows the user to tag all faxes in this request with a user-defined broadcastreference. These faxes can then be retrieved at a later point based on this reference.|
-**SendRef**||String|Similar to the BroadcastRef, this allows the user to tag all faxes in this request with a send reference. The SendRef is used to represent all faxes in this request only, so naturally it must be unique.|
-**FaxMessages**|**X**| Array of FaxMessage |FaxMessages describe each individual fax message and its destination. See below for details.|
-**SendFrom**||Alphanumeric String|A customisable string used to identify the sender of the fax. Also known as the Transmitting Subscriber Identification (TSID). The maximum string length is 32 characters|Fax
-**Documents**|**X**|Array of FaxDocument|Each FaxDocument object describes a fax document to be sent. Multiple documents can be defined here which will be concatenated and sent in the same message. See below for details.|
-**Resolution**||Resolution|Resolution setting of the fax document. Refer to the resolution table below for possible resolution values.|normal
-**ScheduledStartTime**||DateTime|The date and time the transmission of the fax will start.|Current time (immediate sending)
-**Blocklists**||Blocklists|The blocklists that will be checked and filtered against before sending the message. See below for details.WARNING: This feature is inactive and non-functional in this (2.1) version of the Fax API.|
-**Retries**||Unsigned Integer|The number of times to retry sending the fax if it fails. Each account has a maximum number of retries that can be changed by consultation with your account manager.|Account Default
-**BusyRetries**||Unsigned Integer|Certain fax errors such as “NO_ANSWER” or “BUSY” are not included in the above retries limit and can be set separately. Each account has a maximum number of busy retries that can be changed by consultation with your account manager.|Account default
-**HeaderFormat**||String|Allows the header format that appears at the top of the transmitted fax to be changed. See below for an explanation of how to format this field.| From: X, To: X
-**MustBeSentBeforeDate** | | DateTime |  Specifies a time the fax must be delivered by. Once the specified time is reached the fax will be cancelled across the system. | 
-**MaxFaxPages** | | Unsigned Integer |  Sets a limit on the amount of pages allowed in a single fax transmission. Especially useful if the user is blindly submitting their customer's documents to the platform. | 20
-
-***FaxMessage Parameters:***
-This represents a single fax message being sent to a destination.
-
-**Name** | **Required** | **Type** | **Description** | **Default** 
------|-----|-----|-----|-----
-**MessageRef** | **X** | String | A unique user-provided identifier that is used to identify the fax message. This can be used at a later point to retrieve the results of the fax message. |
-**SendTo** | **X** | String | The phone number the fax message will be sent to. |
-**SendFrom** | | Alphanumeric String | A customisable string used to identify the sender of the fax. Also known as the Transmitting Subscriber Identification (TSID). The maximum string length is 32 characters | Empty
-**Documents** | **X** | Array of FaxDocument | Each FaxDocument object describes a fax document to be sent. Multiple documents can be defined here which will be concatenated and sent in the same message. See below for details. | 
-**Resolution** | | Resolution|Resolution setting of the fax document. Refer to the resolution table below for possible resolution values.| normal
-**ScheduledStartTime** | | DateTime | The date and time the transmission of the fax will start. | Start now
-**Blocklists** | | Blocklists | The blocklists that will be checked and filtered against before sending the message. See below for details. WARNING: This feature is inactive and non-functional in this (2.1) version of the Fax API. |
-**Retries** | | Unsigned Integer | The number of times to retry sending the fax if it fails. Each account has a maximum number of retries that can be changed by consultation with your account manager. | Account Default
-**BusyRetries** | | Unsigned Integer | Certain fax errors such as “NO_ANSWER” or “BUSY” are not included in the above retries limit and can be set separately. Please consult with your account manager in regards to maximum value.|account default
-**HeaderFormat** | | String | Allows the header format that appears at the top of the transmitted fax to be changed. See below for an explanation of how to format this field. | From： X, To: X
-**MustBeSentBeforeDate** | | DateTime |  Specifies a time the fax must be delivered by. Once the specified time is reached the fax will be cancelled across the system. | 
-**MaxFaxPages** | | Unsigned Integer |  Sets a limit on the amount of pages allowed in a single fax transmission. Especially useful if the user is blindly submitting their customer's documents to the platform. | 20
-**CLI**| | String| Allows a customer called ID. Note: Must be enabled on the account before it can be used.
-
-***FaxDocument Parameters:***
-Represents a fax document to be sent through the system. Supported file types are: PDF, TIFF, PNG, JPG, GIF, TXT, PS, RTF, DOC, DOCX, XLS, XLSX, PPT, PPTX.
-
-**Name**|**Required**|**Type**|**Description**|**Default**
------|-----|-----|-----|-----
-**FileName**|**X**|String|The document filename including extension. This is important as it is used to help identify the document MIME type.|
-**FileData**|**X**|Base64|The document encoded in Base64 format.|
-**Order** | | Integer|If multiple documents are defined on a message this value will determine the order in which they will be transmitted.|0
-**DitheringTechnique** | | FaxDitheringTechnique | Applies a custom dithering method to their fax document before transmission. | 
-**DocMergeData**|||An Array of MergeFields|
-**StampMergeData**|||An Array of MergeFields|
-
-**FaxDitheringTechnique:**
-
-| Value | Fax Dithering Technique |
-| --- | --- |
-| **none** | No dithering. |
-| **normal** | Normal dithering.|
-| **turbo** | Turbo dithering.|
-| **darken** | Darken dithering.|
-| **darken_more** | Darken more dithering.|
-| **darken_extra** | Darken extra dithering.|
-| **ligthen** | Lighten dithering.|
-| **lighten_more** | Lighten more dithering. |
-| **crosshatch** | Crosshatch dithering. |
-| **DETAILED** | Detailed dithering. |
-
-**Resolution Levels:**
-
-| **Value** | **Description** |
-| --- | --- |
-| **normal** | Normal standard resolution (98 scan lines per inch) |
-| **fine** | Fine resolution (196 scan lines per inch) |
-
-***Header Format:iff***
-Determines the format of the header line that is printed on the top of the transmitted fax message.
-This is set to **rom %from%, To %to%|%a %b %d %H:%M %Y”**y default which produces the following:
-
-From TSID, To 61022221234 Mon Aug 28 15:32 2012 1 of 1
-
-**Value** | **Description**
---- | ---
-**%from%**|The value of the **SendFrom** field in the message.
-**%to%**|The value of the **SendTo** field in the message.
-**%a**|Weekday name (abbreviated)
-**%A**|Weekday name
-**%b**|Month name (abbreviated)
-**%B**|Month name
-**%d**|Day of the month as a decimal (01 – 31)
-**%m**|Month as a decimal (01 – 12)
-**%y**|Year as a decimal (abbreviated)
-**%Y**|Year as a decimal
-**%H**|Hour as a decimal using a 24-hour clock (00 – 23)
-**%I**|Hour as a decimal using a 12-hour clock (01 – 12)
-**%M**|Minute as a decimal (00 – 59)
-**%S**|Second as a decimal (00 – 59)
-**%p**|AM or PM
-**%j**|Day of the year as a decimal (001 – 366)
-**%U**|Week of the year as a decimal (Monday as first day of the week) (00 – 53)
-**%W**|Day of the year as a decimal (001 – 366)
-**%w**|Day of the week as a decimal (0 – 6) (Sunday being 0)
-**%%**|A literal % character
-
-TODO: The default value is set to: “From %from%, To %to%|%a %b %d %H:%M %Y”
-
-<a name="docMergeDataParameters"></a> 
-
-**DocMergeData Mergefield Properties:**
-
-|**Name** | **Required** | **Type** | **Description** |
-|-----|-----|-----|-----|
-|**Key** | | *String* | A unique identifier used to determine which fields need replacing. |
-|**Value** | | *String* | The value that replaces the key. |
-
-<a name="stampMergeDataParameters"></a> 
-**StampMergeData Mergefield Properties:**
-
-|**Name** | **Required** | **Type** | **Description** |
-|-----|-----|-----|-----|
-|**Key** |  | *StampMergeFieldKey* | Contains x and y coordinates where the ImageValue or TextValue should be placed. |
-|**TextValue** |  | *StampMergeFieldTextValue* | The text value that replaces the key. |
-|**ImageValue** |  | *StampMergeFieldImageValue* | The image value that replaces the key. |
-
- **StampMergeFieldKey Properties:**
-
-| **Name** | **Required** | **Type** | **Description** |
-|----|-----|-----|-----|
-| **xCoord** |  | *Int* | X coordinate. |
-| **yCoord** |  | *Int* | Y coordinate. |
-
-**StampMergeFieldTextValue Properties:**
-
-|**Name** | **Required** | **Type** | **Description** |
-|-----|-----|-----|-----|
-|**fontName** |  | *String* | Font name to be used. |
-|**fontSize** |  | *Decimal* | Font size to be used. |
-
-**StampMergeFieldImageValue Properties:**
-
-|**Name** | **Required** | **Type** | **Description** |
-|-----|-----|-----|-----|
-|**fileName** |  | *String* | The document filename including extension. This is important as it is used to help identify the document MIME type. |
-|**fileData** |  | *Base64* | The document encoded in Base64 format. |
-
-###Response
-The response received from a `SendFaxRequest` matches the response you receive when calling the `FaxStatus` method call with a `send` verbosity level.
-
-###SOAP Faults
-This function will throw one of the following SOAP faults/exceptions if something went wrong:
-**InvalidArgumentsException, NoMessagesFoundException, DocumentContentTypeNotFoundException, or InternalServerException.**
-You can find more details on these faults [here](#section5).
 
 ##FaxStatus
 ###Description
@@ -857,5 +873,217 @@ resumeFaxRequest.messageRef= 'Testing-message-1’
 resumeFaxResponse = client.resumeFax(resumeFaxRequest)
 print resumeFaxResponse
 ```
+##SaveFaxDocument
+###Description
+
+This function allows you to upload a document and save it under a document reference (DocumentRef) for later use. (Note: These saved documents only last 30 days on the system.)
+
+###Request
+**SaveFaxDocumentRequest Parameters:**
+
+| **Name** | **Required** | **Type** | **Description** |
+|--- | --- | --- | --- | ---|
+|**DocumentRef**| **X** | *String* | Unique identifier for the document to be uploaded. |
+|**FileName**| **X** | *String* | The document filename including extension. This is important as it is used to help identify the document MIME type. |
+| **FileData**|**X**| *Base64* |The document encoded in Base64 format.| |
+
+###SOAP Faults
+This function will throw one of the following SOAP faults/exceptions if something went wrong:
+**DocumentRefAlreadyExistsException**, **DocumentContentTypeNotFoundException**, **InternalServerException**.
+You can find more details on these faults in Section 5 of this document.You can find more details on these faults in the next section of this document.
 
 
+###Saving Fax Document
+
+```python
+# Setup save fax document request
+saveFaxDocumentRequest = SaveFaxDocumentRequest()
+saveFaxDocumentRequest.fileName='testing'
+saveFaxDocumentRequest.fileData='base64 string of file'
+saveFaxDocumentRequest.documentRef='testing'
+
+# Call save fax document method
+client.saveFaxDocument(saveFaxDocumentRequest)
+
+```
+
+
+##DeleteFaxDocument
+###Description
+
+This function removes a saved fax document from the system.
+
+###Request
+**DeleteFaxDocumentRequest Parameters:**
+
+| **Name** | **Required** | **Type** | **Description** |
+|--- | --- | --- | --- | ---|
+|**DocumentRef**| **X** | *String* | Unique identifier for the document to be deleted. |
+
+###SOAP Faults
+This function will throw one of the following SOAP faults/exceptions if something went wrong:
+**DocumentRefDoesNotExistException**, **InternalServerException**.
+You can find more details on these faults in Section 5 of this document.You can find more details on these faults in the next section of this document.
+
+###Deleting fax document:
+```python
+# Setup delete request
+deleteFaxDocumentRequest = DeleteFaxDocumentRequest()
+deleteFaxDocumentRequest.documentRef='wasabi'
+
+# Call Delete Fax Document method
+client.deleteFaxDocument(deleteFaxDocumentRequest)
+
+```
+##PreviewFaxDocument
+###Description
+
+This function provides you with a method to generate a preview of a saved document at different resolutions with various dithering settings. It returns a tiff data in base64 along with a page count.
+
+###Request
+**FaxDocumentPreviewRequest Parameters:**
+
+| **Name** | **Required** | **Type** | **Description** | **Default** |
+|--- | --- | --- | --- | ---|
+|**Resolution**|  | *Resolution* |Resolution setting of the fax document. Refer to the resolution table below for possible resolution values.| normal |
+|**DitheringTechnique**| | *FaxDitheringTechnique* | Applies a custom dithering method to the fax document before transmission. | |
+|**DocMergeData** | | *Array of DocMergeData MergeFields* | Each mergefield has a key and a value. The system will look for the keys in a document and replace them with their corresponding value. ||
+|**StampMergeData** | | *Array of StampMergeData MergeFields* | Each mergefield has a key a corressponding TextValue/ImageValue. The system will look for the keys in a document and replace them with their corresponding value. | | |
+
+**DocMergeData Mergefield Parameters:**
+
+|**Name** | **Required** | **Type** | **Description** |
+|-----|-----|-----|-----|
+|**Key** | | *String* | A unique identifier used to determine which fields need replacing. |
+|**Value** | | *String* | The value that replaces the key. |
+
+**StampMergeData Mergefield Parameters:**
+
+|**Name** | **Required** | **Type** | **Description** |
+|-----|-----|-----|-----|
+|**Key** |  | *StampMergeFieldKey* | Contains x and y coordinates where the ImageValue or TextValue should be placed. |
+|**TextValue** |  | *StampMergeFieldTextValue* | The text value that replaces the key. |
+|**ImageValue** |  | *StampMergeFieldImageValue* | The image value that replaces the key. |
+
+ **StampMergeFieldKey Parameters:**
+
+| **Name** | **Required** | **Type** | **Description** |
+|----|-----|-----|-----|
+| **xCoord** |  | *Int* | X coordinate. |
+| **yCoord** |  | *Int* | Y coordinate. |
+
+**StampMergeFieldTextValue Parameters:**
+
+|**Name** | **Required** | **Type** | **Description** |
+|-----|-----|-----|-----|
+|**fontName** |  | *String* | Font name to be used. |
+|**fontSize** |  | *Decimal* | Font size to be used. |
+
+**StampMergeFieldImageValue Parameters:**
+
+|**Name** | **Required** | **Type** | **Description** |
+|-----|-----|-----|-----|
+|**fileName** |  | *String* | The document filename including extension. This is important as it is used to help identify the document MIME type. |
+|**fileData** |  | *Base64* | The document encoded in Base64 format. |
+
+**FaxDitheringTechnique:**
+
+| Value | Fax Dithering Technique |
+| --- | --- |
+| **none** | No dithering. |
+| **normal** | Normal dithering.|
+| **turbo** | Turbo dithering.|
+| **darken** | Darken dithering.|
+| **darken_more** | Darken more dithering.|
+| **darken_extra** | Darken extra dithering.|
+| **ligthen** | Lighten dithering.|
+| **lighten_more** | Lighten more dithering. |
+| **crosshatch** | Crosshatch dithering. |
+| **DETAILED** | Detailed dithering. |
+
+**Resolution Levels:**
+
+| **Value** | **Description** |
+| --- | --- |
+| **normal** | Normal standard resolution (98 scan lines per inch) |
+| **fine** | Fine resolution (196 scan lines per inch) |
+
+####Sending FaxDocumentPreview 
+
+```python
+# Setup Requests
+faxDocumentPreviewRequest = FaxDocumentPreviewRequest()
+
+# Document Ref of the document you want to see.
+faxDocumentPreviewRequest.documentRef='txtRef'
+
+#Call the faxDocument preview method
+faxDocumentPreviewResponse = client.faxDocumentPreview(faxDocumentPreviewRequest)
+
+```
+
+####Sending FaxDocumentPreview with doc merge fields
+
+```python
+# Setup Merge fields
+docMergeData = DocMergeData()
+docMergeData.key='key'
+docMergeData.value='value'
+
+# Setup Requests
+faxDocumentPreviewRequest = FaxDocumentPreviewRequest()
+
+# Document Ref of the document you want to see.
+faxDocumentPreviewRequest.documentRef='docxRef'
+faxDocumentPreviewRequest.addDocMergeData(docMergeData)
+
+#Call the faxDocument preview method
+faxDocumentPreviewResponse = client.faxDocumentPreview(faxDocumentPreviewRequest)
+
+```
+The sample above shows a preview of a document with doc merge data. This works the same with using merge Fields in SendFax. 
+
+####Sending FaxDocumentPreview with stamp merge fields
+
+```python
+# Setup Merge fields
+imageStampMergeData = ImageStampMergeData()
+imageStampMergeData.fileData="base64 string of file"
+imageStampMergeData.keyXCoord="283"
+imageStampMergeData.keyYCoord="175"
+imageStampMergeData.fileName="corgi.jpg"
+imageStampMergeData.width="120"
+imageStampMergeData.height="130"
+
+textStampMergeData = TextStampMergeData()
+textStampMergeData.textValue='some dude'
+textStampMergeData.keyXCoord="424"
+textStampMergeData.keyYCoord="844"
+textStampMergeData.fontName='Times-Roman'
+
+# Setup Requests
+faxDocumentPreviewRequest = FaxDocumentPreviewRequest()
+
+# Document Ref of the document you want to see.
+faxDocumentPreviewRequest.documentRef='pdfRef'
+faxDocumentPreviewRequest.addStampMergeData(imageStampMergeData)
+faxDocumentPreviewRequest.addStampMergeData(textStampMergeData)
+
+#Call the faxDocument preview method
+faxDocumentPreviewResponse = client.faxDocumentPreview(faxDocumentPreviewRequest)
+
+```
+The sample above shows a preview of a document with stamp merge data. This works the same with using merge Fields in SendFax.
+
+###Response
+**FaxDocumentPreviewResponse**
+
+**Name** | **Type** | **Description** 
+-----|-----|-----
+**TiffPreview** | *String* | A preview version of the document encoded in Base64 format. 
+**NumberOfPages** | *Int* | Total number of pages in the document preview.
+
+###SOAP Faults
+This function will throw one of the following SOAP faults/exceptions if something went wrong:
+**DocumentRefDoesNotExistException**, **InternalServerException**, **UnsupportedDocumentContentType**, **MergeFieldDoesNotMatchDocumentTypeException**, **UnknownHostException**.
+You can find more details on these faults in Section 5 of this document.You can find more details on these faults in the next section of this document.
