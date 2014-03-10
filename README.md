@@ -7,7 +7,7 @@ Monopond Fax API Python Client
 
 * This is a soap web serice client for monopond web serivces built on top of Suds.
 
-* Requires Suds web services Client to be installed.(https://fedorahosted.org/suds/wiki/Documentation)
+* Requires Suds 0.4 web services Client to be installed.(https://fedorahosted.org/suds/wiki/Documentation)
 
 ```bash
 pip install suds
