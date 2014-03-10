@@ -217,7 +217,7 @@ To send a fax to a single destination, a request similar to the following exampl
 
 ```python
 # Setup Document
-document = Document()
+document = FaxDocument()
 document.fileName = 'test'
 document.fileData = 'base64 string of file' #convert your file to base64 string and place it here
 document.order = 0
@@ -318,7 +318,7 @@ This method is recommended for broadcasting as it takes advantage of the multipl
 ```python
 
 #Setup Document
-document = Document();
+document = FaxDocument();
 document.fileName = "AnyFileName1.txt";
 document.fileData = 'base64 string of file'; #convert your file to base64 string and place it here
 document.order = 0;
