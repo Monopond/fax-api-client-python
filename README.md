@@ -9,6 +9,10 @@ Monopond Fax API Python Client
 
 * Requires Suds web services Client to be installed.(https://fedorahosted.org/suds/wiki/Documentation)
 
+```bash
+pip install suds
+```
+
 * Provides concrete classes that you can use to map values to requests and read responses.
 
 ###Logging:
