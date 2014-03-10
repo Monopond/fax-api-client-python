@@ -255,20 +255,20 @@ To send faxes to multiple destinations, a request similar to the following examp
 
 # Setup Document in 3 ways.
 # This will save 'test 1' file with document ref 'testDocument'
-document1 = Document()
+document1 = FaxDocument()
 document1.documentRef = 'testDocument'
 document1.fileName = 'test 1'
 document1.fileData = 'base64 string of file' #convert your file to base64 string and place it here
 document1.order = 0
 
 # This will save 'test 1' file without any document ref
-document2 = Document()
+document2 = FaxDocument()
 document2.fileName = 'test 2'
 document2.fileData = 'maryhadalittlelamb'
 document2.order = 0
 
 # This will get a document with document ref of 'previouslySavedDocument'
-document3 = Document()
+document3 = FaxDocument()
 document2.documentRef = 'previouslySavedDocument'
 document3.order = 0
 
