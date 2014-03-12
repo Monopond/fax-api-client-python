@@ -396,7 +396,7 @@ document.addDocMergeData(docMergeData)
 
 faxMessage = FaxMessage()
 faxMessage.messageRef = 'test-2-1-1'
-faxMessage.sendTo = '61280039890'
+faxMessage.sendTo = '60000000000'
 faxMessage.sendFrom = '123'
 faxMessage.scheduledStartTime = None
 faxMessage.retries = 3
@@ -463,7 +463,7 @@ document.addStampMergeData(textStampMergeData)
 
 faxMessage = FaxMessage()
 faxMessage.messageRef = 'test-2-1-1'
-faxMessage.sendTo = '61280039890'
+faxMessage.sendTo = '60000000000'
 faxMessage.sendFrom = '123'
 faxMessage.scheduledStartTime = None
 faxMessage.retries = 3
@@ -506,7 +506,7 @@ document.addStampMergeData(imageStampMergeData)
 
 faxMessage = FaxMessage()
 faxMessage.messageRef = 'test-2-1-1'
-faxMessage.sendTo = '61280039890'
+faxMessage.sendTo = '60000000000'
 faxMessage.sendFrom = '123'
 faxMessage.scheduledStartTime = None
 faxMessage.retries = 3
