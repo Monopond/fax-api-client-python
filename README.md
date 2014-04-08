@@ -46,7 +46,7 @@ To use Monopond SOAP Python Client, start by including the monopond_python_clien
 from pymonopond.monopond_python_client import *
 
 # Enter your own credentials here
-client = ClientWrapper('http://192.168.1.35:8000/fax/soap/v2?wsdl','username','password')
+client = ClientWrapper('https://api.monopond.com/fax/soap/v2?wsdl','username','password')
 
 # Setup your request here
 ```
